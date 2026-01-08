@@ -1,0 +1,239 @@
+fileFormatVersion: 2
+guid: 7cd8af81ca62bf84ca58c14e2ba89628
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1_+Eyes_Normal.Eyeballs_0.7_1_1
+    second: {fileID: 2100000, guid: e0cd36e4128aaba4a950bab17efeb650, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1_-Eyes_Powers.REyeballs_0.7_1_1
+    second: {fileID: 2100000, guid: fe6cc023710026b47a885b2f102561a8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 22_-Glove.HandL_0.3_90_10
+    second: {fileID: 2100000, guid: 7fabf5083dfed5b4296be61cab9125e7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 22_Body_0.3_90_10
+    second: {fileID: 2100000, guid: 1f18312063344464bace644ac9a94ead, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 23_Head_0.3_90_10
+    second: {fileID: 2100000, guid: eddb8e6747605c74eb2cf95195d8820a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_+Glove.Glove_0.2_0_0
+    second: {fileID: 2100000, guid: 0d0a6b348b2985840ae7f6eceb8437de, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_+Jacket.Jacket_0.32_0_0
+    second: {fileID: 2100000, guid: 6b7e8d1d12825984a9f6e2a04d3430fe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_+Jacket.PantsButtons_0.5_0_0
+    second: {fileID: 2100000, guid: 95a3793ba8eeca3438fddaef59d4ed5f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_Boots_0.25_0_0
+    second: {fileID: 2100000, guid: 9d379f015c616aa4ab324c1e4872f4a5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_ButtonsPants_0.5_0_0
+    second: {fileID: 2100000, guid: df418670cc075fa4891d2e76fbfd5f4c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_Pants_0.32_0_0
+    second: {fileID: 2100000, guid: 0960f6574d0140c48930f7b60bc84ece, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_Shirt_0.1_0_0
+    second: {fileID: 2100000, guid: 62e612ae03a8f95419b8fae213e20189, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 25_+Ring of the Lucii.Ring_0.5_0_0
+    second: {fileID: 2100000, guid: c14b7d16b1635e647b03fdef5ef60bdc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_+Glove.GloveBuckle_0.3_0_0
+    second: {fileID: 2100000, guid: aab211f9041046346b2c8aa3f99a4223, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_+Jacket.Zippers_0.15_0_0
+    second: {fileID: 2100000, guid: b3c25410dffe26242b84f27511b3a6f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_+Ring of the Lucii.RingJew_0.3_0_0
+    second: {fileID: 2100000, guid: 06a9399747cdb734a925cbd6690a5d42, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_BootsMetals_0.4_0_0
+    second: {fileID: 2100000, guid: bf91f73d88e06754fbd535af056be7f8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_PantsDec_0.3_0_0
+    second: {fileID: 2100000, guid: 7d847c8b4f5f9634d9a81d1c520483c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_+Eyes_Normal.EyeballsGL_0.1_0_0
+    second: {fileID: 2100000, guid: 81ca27b5a72dd1241801e08983d43de2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_-Eyes_Powers.REyeballsGL_0.3_0_0
+    second: {fileID: 2100000, guid: febc1a1ce8ae3ec4da0f9f051d9999f6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_Hair1_0.1_0_0
+    second: {fileID: 2100000, guid: bb91c957314b3d74ea6c922e86c0d492, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_HairBF_0.1_0_0
+    second: {fileID: 2100000, guid: f3bceb5abe96e354d9a88788f0145b0b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_HairBase2_0.1_0_0
+    second: {fileID: 2100000, guid: c879f611f6e589a47b855913bbe111af, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_HairBase_0.1_0_0
+    second: {fileID: 2100000, guid: 717cfc711438e7d4f80b33ff7de38f5c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 4_Mouth_0.6_0_0
+    second: {fileID: 2100000, guid: b55244e5423da7547919903f635ff800, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 6_Eyelashes_0.2_0_0
+    second: {fileID: 2100000, guid: 33d74dbc1c76cc44fabc8067cf70bb17, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

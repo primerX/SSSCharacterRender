@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b2425a2284af743826c689403a4924, type: 3}
+  m_Name: Dilation
+  m_EditorClassIdentifier: 
+  m_functionInfo: "// Made with Amplify Shader Editor v1.9.2.2\n// Available at the
+    Unity Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=19202\nNode;AmplifyShaderEditor.CommentaryNode;7;-1732.002,-334.9158;Inherit;False;298.8;277;replace
+    with something procedural;1;2;;1,1,1,1;0;0\nNode;AmplifyShaderEditor.Compare;10;72.3999,-114.3;Inherit;False;0;4;0;FLOAT;1;False;1;FLOAT;0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.FunctionOutput;0;269,-117;Inherit;False;True;-1;Output;0;False;1;0;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.FunctionInput;4;-1153.002,-403.9157;Inherit;False;uv;2;0;False;1;0;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.TextureCoordinatesNode;15;-1437.784,-474.2548;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.CustomExpressionNode;1;-456,-126.3;Inherit;False;float2
+    outUV = inUV@$outUV -= 0.5@$float pupilRange = 1.0 - tex2D(ScaleMask, inUV).r@$outUV.xy
+    *= saturate(lerp(1.0f, pupilRange, Dilation))@$outUV.xy += 0.5f@$$return outUV@;2;Create;3;True;inUV;FLOAT2;0,0;In;;Inherit;False;True;ScaleMask;SAMPLER2D;;In;;Inherit;False;True;Dilation;FLOAT;0;In;;Inherit;False;My
+    Custom Expression;True;False;0;;False;3;0;FLOAT2;0,0;False;1;SAMPLER2D;;False;2;FLOAT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.TexturePropertyNode;2;-1682.002,-284.9158;Inherit;True;Property;_ScaleMask;ScaleMask;0;1;[NoScaleOffset];Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1\nNode;AmplifyShaderEditor.CustomExpressionNode;8;-453.6001,52.69977;Inherit;False;float2
+    outUV = inUV@$outUV -= 0.5@$float pupilRange = 1.0 - ScaleMask@$outUV.xy *= saturate(lerp(1.0f,
+    pupilRange, Dilation))@$outUV.xy += 0.5f@$$return outUV@;2;Create;3;True;inUV;FLOAT2;0,0;In;;Inherit;False;True;ScaleMask;FLOAT;0;In;;Inherit;False;True;Dilation;FLOAT;0;In;;Inherit;False;Dilation
+    no texture;True;False;0;;False;3;0;FLOAT2;0,0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.FunctionNode;12;-853.218,257.4385;Inherit;True;CircleMask;-1;;1;7440ccc3aa66d3049b3a9ef6f2faf25a;0;4;9;FLOAT2;0.5,0.5;False;10;FLOAT2;0,0;False;4;FLOAT;0.3;False;3;FLOAT;0.15;False;1;FLOAT;8\nNode;AmplifyShaderEditor.RangedFloatNode;14;-1239.593,340.6997;Inherit;False;Property;_DilationMaskHardness;DilationMaskHardness;3;0;Create;True;0;0;0;True;0;False;0.4020753;0;0.01;2;0;1;FLOAT;0\nNode;AmplifyShaderEditor.RangedFloatNode;13;-1247.619,249.3952;Inherit;False;Property;_DilationMaskRadius;DilationMaskRadius;2;0;Create;True;0;0;0;True;0;False;0.189;0;0.01;0.2;0;1;FLOAT;0\nNode;AmplifyShaderEditor.RangedFloatNode;5;-843,107.7;Inherit;False;Property;_Dilation;Dilation;1;0;Create;True;0;0;0;True;0;False;0;0;0;10;0;1;FLOAT;0\nNode;AmplifyShaderEditor.RangedFloatNode;16;-184.8953,-32.97729;Inherit;False;Property;_EyeDilation;_EyeDilation;4;1;[Toggle];Create;True;0;0;0;True;0;False;0;0;0;0;0;1;FLOAT;0\nWireConnection;10;1;16;0\nWireConnection;10;2;8;0\nWireConnection;10;3;4;0\nWireConnection;0;0;10;0\nWireConnection;4;0;15;0\nWireConnection;1;0;4;0\nWireConnection;1;2;5;0\nWireConnection;8;0;4;0\nWireConnection;8;1;12;8\nWireConnection;8;2;5;0\nWireConnection;12;10;4;0\nWireConnection;12;4;13;0\nASEEND*/\n//CHKSM=2367749CCA320753DCEB08B76F3A2333C58227CB"
+  m_functionName: 
+  m_description: 
+  m_additionalIncludes:
+    m_additionalIncludes: []
+    m_outsideIncludes: []
+  m_additionalPragmas:
+    m_additionalPragmas: []
+    m_outsidePragmas: []
+  m_additionalDirectives:
+    m_validData: 0
+    m_isDirty: 0
+    m_moduleName: ' Additional Directives'
+    m_independentModule: 1
+    m_customEdited: 0
+    m_additionalDirectives: []
+    m_shaderFunctionDirectives: []
+    m_nativeDirectives: []
+    m_nativeDirectivesIndex: -1
+    m_nativeDirectivesFoldout: 0
+    m_directivesSaveItems: []
+  m_nodeCategory: 3
+  m_headerStyle: 0
+  m_headerColor: {r: 1, g: 0.4, b: 0, a: 1}
+  m_customNodeCategory: 
+  m_previewPosition: 0
+  m_hidden: 0
+  m_url: 

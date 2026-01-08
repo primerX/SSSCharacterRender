@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: ffa129b16bfec294390a70463178a1c1
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _bluenoise: {fileID: 2800000, guid: d469c63fdf99cd243a05047268aeaa5d, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

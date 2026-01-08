@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30249a92184c4438b437822799bbc719, type: 3}
+  m_Name: WeatherSample
+  m_EditorClassIdentifier: 
+  childMaterials:
+  - {fileID: 2100000, guid: 46feaf7df3f37cf48a30de570a8e6fcd, type: 2}
+  - {fileID: 2100000, guid: 9ddc5be882aad1844a8f38ff5e06cb10, type: 2}
+  - {fileID: 2100000, guid: 0f3dda4f166009f4385d15092a63edb0, type: 2}
+  - {fileID: 2100000, guid: a81626e9d616d844792f25b3361fdc19, type: 2}
+  - {fileID: 2100000, guid: 0fba8698137a5ac42bfd2a0116175300, type: 2}
+  PuddleNormal: {fileID: 2800000, guid: 3a8095fb043c7114080b23bac92d259d, type: 3}
+  PuddlesFramesSize: {x: 3, y: 3}
+  PuddlesSize: 4
+  PuddlesAnimationSpeed: 10
+  RainNormal: {fileID: 2800000, guid: f710d1575263c4b428964d7222e1c5ef, type: 3}
+  RainSize: 1
+  RainAnimationSpeed: 0.1

@@ -1,0 +1,234 @@
+fileFormatVersion: 2
+guid: ae3d876b29c02ec43a91ff79381cefcd
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1_+Eyes_Normal.Eyeballs_0.9_1_1
+    second: {fileID: 2100000, guid: 4b29de5ab2098c5439e8b4c23233e743, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1_-Eyes_Power II.REyeballs_0.6_1_1
+    second: {fileID: 2100000, guid: 31439f0f79be91b4e8ccf388222ad78c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 22_-Glove.HandL_0.2_90_10
+    second: {fileID: 2100000, guid: f645295158b6db3489c8751ed720534f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 22_Body_0.15_90_10
+    second: {fileID: 2100000, guid: 4945b75c0e56fd345bfa42ee77c0d2c2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 23_Head_0.15_60_10
+    second: {fileID: 2100000, guid: 993134132e16e2542886839d6b92aaec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_+Glove.Glove_0.25_0_0
+    second: {fileID: 2100000, guid: 05c8fb3a718effe4fb72e147cf4f781a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_+Jacket.Jacket_0.32_0_0
+    second: {fileID: 2100000, guid: 51cd204ca9da4f14eb9fe9165bff1509, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_+Jacket.PantsButtons_0.5_0_0
+    second: {fileID: 2100000, guid: 00abb9879c477b244ab502a722f9e4c5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_Boots_0.25_0_0
+    second: {fileID: 2100000, guid: d4074f98457aa9546b724168cb9c3534, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_ButtonsPants_0.5_0_0
+    second: {fileID: 2100000, guid: 474ef3fb64d7e3b4db761312de92810c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_Pants_0.32_0_0
+    second: {fileID: 2100000, guid: d30f15d633769ee44afa681a4b551bec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 24_Shirt_0.1_0_0
+    second: {fileID: 2100000, guid: 9d02122fc9772d54e89eff9ed79138da, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 25_+Ring of the Lucii.Ring_0.5_0_0
+    second: {fileID: 2100000, guid: 336cf23b11d53e843a128966a8bb44a0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_+Glove.GloveBuckle_0.3_0_0
+    second: {fileID: 2100000, guid: 57a73ca7b0b872246853d8bb625c6bdf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_+Jacket.Zippers_0.15_0_0
+    second: {fileID: 2100000, guid: 2f1b72a62632b41489bea1e5dbcb75d2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_+Ring of the Lucii.RingJew_0.3_0_0
+    second: {fileID: 2100000, guid: a71c116a5d1a83c43b39669434cec61b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_BootsMetals_0.4_0_0
+    second: {fileID: 2100000, guid: b4b7946d5b6d7e4468f9cea3ccf05ec5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 26_PantsDec_0.3_0_0
+    second: {fileID: 2100000, guid: 665256f21f7f9694bba9fd4a71cb26df, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_+Beard.Beard_0.1_0_0
+    second: {fileID: 2100000, guid: 0a0ac07d1f8279f468f8153c1f104d91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_+Eyes_Normal.EyeballsSHN_0.3_0_0
+    second: {fileID: 2100000, guid: 9ff15c1d4b264f047abafccf1bf53d70, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_-Eyes_Power II.REyeballsSHN_0.2_0_0
+    second: {fileID: 2100000, guid: f30fc332a753db34f828bc143f5cc3e5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_HairBaseBF_0.13_0_0
+    second: {fileID: 2100000, guid: ba34489e560c5b645bf89d1c53bf591b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_HairBase_0.13_0_0
+    second: {fileID: 2100000, guid: 7584e60b8bc0dd34eb435bdbb401a7c1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 27_HairFringe_0.13_0_0
+    second: {fileID: 2100000, guid: 23d887e9d2608124c90d7c5d165c8824, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 6_Mouth_0.6_0_0
+    second: {fileID: 2100000, guid: 1863005a94fb24048a6e56bf6f04e522, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,340 @@
+﻿Screen-Space Subsurface Scattering for URP
+
+
+Revision 1.2 March 2024
+
+
+Works on URP pipeline ONLY and PC
+Index
+Abstract        0
+Gallery
+Full resolution image Gallery        0
+Setup        0
+Demos overview        0
+● Eyes        0
+● HD Head        0
+● Lucy        0
+● Tester        0
+Material        0
+Volume profile:        0
+SSS Object script:        0
+
+
+Abstract
+Commonly known as SSS, this effect performs a special type of blur of the diffuse lighting pass in screen space to simulate how light is scattered behind the surface. The program is highly customizable to meet performance compromises easily. URP version introduces a better translucency method based on the shadowmap. Developed for PC
+
+
+ PC Demo  
+Gallery
+Full resolution image Gallery
+Setup
+        Before import: delete the folder ‘SSS URP’ if it already exists.
+
+
+Quick start: open your pipeline asset and add the ‘SSS Renderer’ to the renderer List
+  
+
+Another quick start: assign the included pipeline asset to your current Quality level
+
+
+  
+
+
+
+Integration into an existing renderer:
+Set Depth Texture Mode to Force Prepass
+  
+
+
+
+Add two instances of the Renderer feature “Render With Shader”
+
+
+Copy the following settings. 
+  
+
+Make sure to copy the texture names correctly:
+Light pass RT name: _SSS_LightPass
+Profile pass RT name: _SSS_ProfilePass
+Assign the SSS object to the layer indicated in these renderers. The included demos use the layer ‘Water’.
+Layer: We can filter by layer and by rendering layer
+  
+
+Next, SSS pass. Make sure to fill all the fields
+  
+
+
+
+* RT_Format: choose between Default (non HDR) or Default HDR.
+* Event: set Before Rendering Opaques for all the features
+* Radius: blur radius
+* Passes: amount of blur iterations
+* Iterations: shader loop iterations per pass
+* Downsample: Allows to reduce the buffers size. Useful to improve performance
+* Dither: randomizes sampling position to reduce banding. Impacts performance
+Dither can be very expensive in closeups. This is already a known hardware problem described by Jorge Jimenez.
+  
+
+
+
+* Dither Scale: adjusts the noise sale
+* Fix pixel leak: this prevents moving pixels away from the object
+
+
+  
+
+
+
+* Edge test: performs different tests to avoid blurring the edges and keep them sharp
+   * Depth test: tests using the depth buffer
+   * Profile test: tests using the profile buffer. Color test and alpha (blur radius) independently
+   * Normal test: tests using the normal buffer
+* Resources: required assets. DON'T MODIFY
+   * Target name: _SSS_Blur. DON’T change unless you write your own replacement shaders
+   * Blur Material: default postprocess material
+   * CopyLightMaterial: don’t change. This is used to read the _SSS_LightPass render texture
+   * Noise texture: texture used for the dither
+* Cascade weights: Unity shadows are used to simulate translucency. The problem comes with the cascades, as each one has a different intensity and I can't find how to make all of them maintain a consistent intensity. For now we have to balance each one by hand. Do it with the scene 'Cascade weights'. Do the adjustment in the Game View, with the final aspect ratio, the final cascade settings, Camera FOV, MainLight near plane and camera near plane.
+   * Render pipeline asset: assign the current RPA
+  
+
+
+
+* CascadeWeightX: this will hack the cascade intensity
+
+
+
+
+Any of these settings will break the cascades:
+// - Screen aspect ratio
+        // - Scene or GameView window
+        // - Max distance in URP Pipeline Asset/Shadows/
+        // - Cascade count
+        // - Split values
+        // - Field of view
+        // - Conservative Enclosing Sphere option
+        // - Camera near plane
+        // - Light near plane
+        // - Camera FOV
+
+
+To make this process easier, open the scene Utilities/Cascade weights. 
+Set-up this scene with your game values. Near plane, window aspect ratio, main light near plane, fov... and all the variables mentioned above
+1.  Go to Game View once everything is set-up. We’ll see something like this
+  
+
+
+
+2. Now we start adjusting each slider until we get a seamless result. Video
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Demos overview
+Download Demo Content
+* Eyes
+  
+
+This is a complete setup of skin, face hair and eyes. Model provided by triplegangers. All sources included in the package. 
+The tearline object requires Opaque Texture to generate _CameraColorTexture
+
+
+  
+
+
+
+
+
+
+
+* HD Head
+
+
+
+This sample shows a standard skin setup with translucency.
+* Lucy
+  
+
+
+
+This is a showcase of the translucency feature
+
+
+* Tester
+  
+
+
+
+Just a playground to test materials or general settings from the renderer. This scene is using baked GI with dynamic lighting pass.
+Material
+Use the shader ‘SSS Object’
+  
+
+
+
+* Workflow Mode: this only affects the inspector. ’Standard’ shows the common required features. And ‘Eye’ shows specific options for eyes.
+* Enable Overlay: enables texture layers. Useful for makeup
+  
+
+* Enter debug mode: allows us to view different stages of the shading: lightpass, blurred pass, specular, environment reflections and transmission. There is a tool to enable debug modes for the whole scene. Tools/SSS Debug Mode
+  
+
+* Stencil Value: this option is used to mask the occlusion mesh of the eye and also the cornea. In the demo provided the occlusion mesh has value 2. Eye must share the same value and skin must have a different one; 0 or 1.
+
+
+Coords tab:
+* Tiling: multiply uvs by a factor
+* Parallax: enable parallax. Height map must be packed in albedo alpha
+* Depth: adjust the amount of displacement
+* Pupil dilation: adjust the amount of dilation
+  
+
+* Mask Radius: adjust the area size to be scaled
+* Scale UVs: scale uvs from the center
+
+
+  
+
+Lighting tab:
+* GI: adjust the amount of global illumination.
+* Diffuse roughness: roughness value for the diffuse lighting model (oren-nayar)
+* Light Clamp: limit the maximum amount of dynamic light. Useful to limit the high brightness of a point light inside its range.
+  
+
+* Diffuse boost: adjust the intensity of the dynamic lighting pass
+* Prepare for GI bake: to make an SSS object affect GI we must activate this toggle. To automate this process there is a tool that will enable this in every SSS material in the scene  
+  
+
+
+
+Press Prepare andIt will prepare all the objects. Bake and press Revert when done.
+This is needed because the shader has no diffuse, so for the baker it will be simply black.
+   * Iris shadows: creates a shadow that affects the iris. It follows the Main light direction.
+  
+
+Albedo tab:
+   * Albedo: Surface color texture. Pack parallax depth in alpha
+
+
+   * Visibility: lerps texture to 1. Useful when used in combination with Subsurface Map
+   * Subsurface Map: adds a texture to the light pass. This is useful to model subsurface features such as veins, moles or tattoos.
+   * Overlay: If Overlay is enabled then a new texture field will appear. Store the blend value in this alpha channel
+  
+
+   * Sclera Ring: blend the transition between iris and sclera
+
+
+  
+
+It will require a copy of the eye texture without iris and with the ring in place in the alpha channel.
+  
+
+   * Cornea turbidity: this option simulates cornea opacity. Video
+
+
+Profile tab:
+   * Profile color and texture: convolution color and radius. The profile test will use this data, both color and radius. Profile texture alpha is taken into account! Use it to perform variable blur.
+
+
+  
+
+
+
+   * Blur: allows us to set a blur radius per material
+
+
+  
+
+
+
+        Transmission tab:
+  
+
+   * Enable: enables transmission using translucent shadow.
+   * Thickness: add thickness texture data
+   * Tint: tints with texture and color
+   * Enable Gradient Map: color lookup texture. Gives a different color along the translucent shadowmap
+   * Gradient min & max: remap the gradient to adjust the color position
+   * Intensity: control the transmission intensity
+   * Travel distance: distance traveled by light inside the object
+   * Independent sliders for Directional and points, since the resulting shadowmap has different value (because of the near plane)
+
+
+   * Multiplier: multiply point travel distance by a factor. Useful to greatly increase the transmission distance
+
+
+  
+
+
+
+   * Transmission bias: adds a constant value to the transmission map
+  
+
+
+
+   * Mask with normals: uses normals to mask the transmission
+   * CancelMin & CancelMax: used to remap NdotL
+  
+
+
+
+        
+Occlusion tab:
+   * Map: We have 3 types of occlusion data:
+   * R: for diffuse occlusion
+   * G: for specular occlusion
+   * B: cavity (for specular)
+  
+
+
+
+   * Occlusion (light pass): affect light pass only and gets blurred
+   * Occlusion (final pass): affect in the composition pass, not blurred
+   * Specular occlusion: attenuate environment reflections with occlusion.g
+  
+
+Specular tab:
+  
+
+   * Map: RGB for color and alpha for smoothness
+   * Smoothness: adjust smoothness. It will multiply specular.a
+   * Multiplier: multiply smoothness by a factor. Useful when the input maps have low values (ie. Megascans)
+   * Overlay: if Overlay is enabled this secondary map will appear.
+   * Enable cavity: cavity map is stored in occlusion.b
+   * Cavity strength: adjust the influence of cavity
+   * Fresnel: adjust the fresnel effect
+  
+
+
+
+   * Reflections intensity: adjust the environment reflections intensity
+   * Highlight intensity: adjust the specular highlight intensity (brdf may change in future versions)
+
+
+Normal tab:
+   * Normal & normal intensity: normal map and intensity
+   * Enable Detail Normal: adds a detail normal
+   * Detail normal intensity & tile: edit the intensity and size of the detail normal
+
+
+Volume profile:
+It is possible to override the renderer settings per scene using a volume. Add SSS to your volume:
+  
+
+
+
+SSS Object script:
+When the SSS shader is set to a material in a gameobject this script will be added. It is a passive component, you don’t have to do anything with it. But it is required to hack Unity's shader keywords. It turns off the default reflections and specular so we can go custom and do our own lighting model.
+
+
+To follow the development visit https://twitter.com/_david_miranda

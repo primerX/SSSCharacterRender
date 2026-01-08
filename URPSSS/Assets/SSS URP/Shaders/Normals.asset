@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b2425a2284af743826c689403a4924, type: 3}
+  m_Name: Normals
+  m_EditorClassIdentifier: 
+  m_functionInfo: "// Made with Amplify Shader Editor v1.9.2.2\n// Available at the
+    Unity Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=19202\nNode;AmplifyShaderEditor.TextureCoordinatesNode;3;-1671.695,37.02284;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.SimpleMultiplyOpNode;7;-1419.569,76.23084;Inherit;False;2;2;0;FLOAT2;0,0;False;1;FLOAT;0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.BlendNormalsNode;4;-597.6957,128.814;Inherit;False;0;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.NormalizeNode;20;-861.1079,-5.497192;Inherit;False;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.SamplerNode;1;-1261.839,-231.429;Inherit;True;Property;_BumpMap;Normal;23;2;[NoScaleOffset];[Normal];Create;False;0;0;0;True;0;False;-1;None;None;True;0;False;bump;Auto;True;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.RangedFloatNode;5;-1695.137,160.1899;Inherit;False;Property;_DetailNormalMapTile;Tile;27;0;Create;False;0;0;0;True;0;False;10;0;0;0;0;1;FLOAT;0\nNode;AmplifyShaderEditor.SamplerNode;8;-1242.504,62.11533;Inherit;True;Property;_DetailNormalMap;Detail
+    Normal Map;25;2;[NoScaleOffset];[Normal];Create;False;0;0;0;True;0;False;-1;None;None;True;0;False;bump;Auto;True;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.RangedFloatNode;6;-1658.295,321.5138;Inherit;False;Property;_DetailNormalIntensity;Detail
+    Normal Intensity;26;0;Create;False;0;0;0;True;0;False;1;0;0;1;0;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionOutput;0;658.6872,71.5146;Inherit;False;True;-1;Output;0;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.RangedFloatNode;2;-1564.342,-134.3532;Inherit;False;Property;_NormalIntensity;Normal
+    Intensity;24;0;Create;False;0;0;0;True;0;False;1;0;0;1;0;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionNode;24;138.6399,73.65387;Inherit;False;ScleraRing;1;;20;645f15d53ddd4014b823049efc7d008e;0;2;11;FLOAT3;1,0,0;False;6;FLOAT3;0,0,0;False;3;FLOAT3;0;FLOAT3;7;FLOAT3;4\nNode;AmplifyShaderEditor.StaticSwitch;15;-347.0923,94.87556;Inherit;False;Property;_EnableDetailNormal;Enable
+    Detail Normal;0;0;Create;True;0;0;0;False;0;False;0;0;0;True;_ENABLE_DETAIL_NORMAL;Toggle;2;Key0;Key1;Create;True;False;All;9;1;FLOAT3;0,0,0;False;0;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;4;FLOAT3;0,0,0;False;5;FLOAT3;0,0,0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.FunctionNode;26;-1776.751,-218.2233;Inherit;False;FinalUVs;10;;25;e7305a367525ef8438464c5a20dc6f03;0;1;23;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.FunctionNode;27;-1530.491,-287.3477;Inherit;False;SamplerStates;-1;;30;f1319a1607f225842baa459f162e8791;0;0;3;SAMPLERSTATE;0;SAMPLERSTATE;2;SAMPLERSTATE;4\nWireConnection;7;0;26;0\nWireConnection;7;1;5;0\nWireConnection;4;0;20;0\nWireConnection;4;1;8;0\nWireConnection;20;0;1;0\nWireConnection;1;1;26;0\nWireConnection;1;5;2;0\nWireConnection;1;7;27;4\nWireConnection;8;1;7;0\nWireConnection;8;5;6;0\nWireConnection;8;7;27;4\nWireConnection;0;0;24;7\nWireConnection;24;6;15;0\nWireConnection;15;1;20;0\nWireConnection;15;0;4;0\nASEEND*/\n//CHKSM=A67938B5C6BDD62F2AC2E8600AEEDD625F444EFA"
+  m_functionName: 
+  m_description: 
+  m_additionalIncludes:
+    m_additionalIncludes: []
+    m_outsideIncludes: []
+  m_additionalPragmas:
+    m_additionalPragmas: []
+    m_outsidePragmas: []
+  m_additionalDirectives:
+    m_validData: 0
+    m_isDirty: 0
+    m_moduleName: ' Additional Directives'
+    m_independentModule: 1
+    m_customEdited: 0
+    m_additionalDirectives: []
+    m_shaderFunctionDirectives: []
+    m_nativeDirectives: []
+    m_nativeDirectivesIndex: -1
+    m_nativeDirectivesFoldout: 0
+    m_directivesSaveItems: []
+  m_nodeCategory: 3
+  m_headerStyle: 1
+  m_headerColor: {r: 1, g: 0.4, b: 0, a: 1}
+  m_customNodeCategory: 
+  m_previewPosition: 0
+  m_hidden: 0
+  m_url: 

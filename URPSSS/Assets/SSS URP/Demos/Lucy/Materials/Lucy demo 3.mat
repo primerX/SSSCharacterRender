@@ -1,0 +1,289 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6096736489793084731
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Lucy demo 3
+  m_Shader: {fileID: 4800000, guid: c25eff9ee7b7b2d4bb6f9253ba32d948, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ENABLETRANSMISSIONGRADIENT_ON
+  m_InvalidKeywords:
+  - _TRANSMISSION_ON
+  m_LightmapFlags: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: _Travel_Distance
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: e82bed9e4c3b62a4a91b02663ff4358d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CavityMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IrisDetailShadowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IrisShadowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 9a884128c443b3e44b9c410a6d0986d5, type: 3}
+        m_Scale: {x: 20, y: 20}
+        m_Offset: {x: -9.5, y: -9.5}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 2800000, guid: 1100ad8becd68fb44a6cc7cc88789efc, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlayAlbedo:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlaySpecular:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProfileMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ScaleMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ScleraRingMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubsurfaceMap:
+        m_Texture: {fileID: 2800000, guid: 9a884128c443b3e44b9c410a6d0986d5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionGradient:
+        m_Texture: {fileID: 2800000, guid: 5629c981d20dc874186b0dffd0de6739, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionTintMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ttm:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlbedoInfluence: 1
+    - _AlbedoOpacity: 1
+    - _AlphaCutoff: 0.5
+    - _Blur: 0.07
+    - _BumpScale: 1
+    - _CancelMax: 1
+    - _CancelMin: 0
+    - _Cavity: 0
+    - _CavityStrength: 0
+    - _Cookies: 1
+    - _CorneaDepth: 0
+    - _CorneaMaskMax: 1
+    - _CorneaMaskMin: 0.9592496
+    - _CorneaOpacity: 0.1413043
+    - _CorneaSizeMax: 1
+    - _CorneaSizeMin: 1
+    - _CorneaTurbidity: 0
+    - _Cutoff: 0.5
+    - _DEBUG: 0
+    - _Debug: 0
+    - _DebugMode: 0
+    - _Depth: 0
+    - _Depth_Center: 0
+    - _DetailNormalIntensity: 1
+    - _DetailNormalMapScale: 1
+    - _DetailNormalMapTile: 1
+    - _DetasilNormalIntensity: 1
+    - _DiffuseRoughness: 0
+    - _Diffuseboost: 1
+    - _Dilation: 0
+    - _DilationMaskHardness: 0.4020753
+    - _DilationMaskRadius: 0.189
+    - _DisableUnitySpecular: 1
+    - _DstBlend: 0
+    - _ENABLEPARALLAX: 0
+    - _ENABLE_DETAIL_NORMAL: 0
+    - _EYEDILATION: 0
+    - _EnableDetailNormal: 0
+    - _EnableParallax: 0
+    - _EnableSubsurface: 0
+    - _EnableTransmissionGradient: 1
+    - _EnableUVScale: 0
+    - _EnvironmentReflections: 1
+    - _EnvironmentReflectionsIntensity: 1
+    - _EyeDilation: 0
+    - _FresnelIntensity: 1
+    - _GI: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _GradientMax: 2.59
+    - _GradientMin: -0.86
+    - _IrisMicroShadows: 0
+    - _IrisSelfShadowCircleHardness: 10
+    - _IrisSelfShadowCircleRadius: 0.3586957
+    - _IrisShadow: 0
+    - _IrisShadowDistance: 0
+    - _IrisShadowOpacity: 0
+    - _Keyword0: 0
+    - _Keyword1: 0
+    - _Keyword10: 0
+    - _Keyword11: 0
+    - _Keyword12: 0
+    - _Keyword13: 0
+    - _Keyword14: 0
+    - _Keyword2: 0
+    - _Keyword3: 0
+    - _Keyword4: 0
+    - _Keyword5: 0
+    - _Keyword6: 0
+    - _Keyword7: 0
+    - _Keyword8: 0
+    - _Keyword9: 0
+    - _LightClamp: 10
+    - _LightingModel: 0
+    - _MAIN_LIGHT: 0
+    - _MASK_WITH_NORMALS: 0
+    - _MaskWithNormals: 0
+    - _Maskwithnormals: 0
+    - _MaxDistance: 46.45
+    - _Metallic: 0
+    - _MicroShadowsDistance: 0
+    - _MicroShadowsOpacity: 1
+    - _Mode: 0
+    - _NormalIntensity: 1
+    - _Occlusion: 0.24
+    - _OcclusionStrength: 1
+    - _Occlusionfinalpass: 0.514
+    - _Occlusionlightpass: 0.352
+    - _Overlay: 0
+    - _OverlaySmoothness: 1
+    - _Parallax: 0.02
+    - _PrepareforGIbake: 0
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _ReflectionsOff: 1
+    - _SSS_DebugMode: 1
+    - _SSS_WorkflowMode: 0
+    - _ScaleUV: 1
+    - _ScleraRing: 0
+    - _Smoothness: 0.758
+    - _SmoothnessMult: 1
+    - _SmoothnessTextureChannel: 0
+    - _Soften_Normals: 1
+    - _SpecularHighlightIntensity: 2.9
+    - _SpecularHighlights: 1
+    - _SpecularOcclusion: 1
+    - _Specular_Occlusion: 1
+    - _SrcBlend: 1
+    - _StencilValue: 1
+    - _Subsurface: 0
+    - _TRANSMISSION: 1
+    - _Tiling: 1
+    - _TranslucencyDistanceFade: 2000
+    - _Transmission: 1
+    - _Transmission_Bias: 0
+    - _Transmission_intensity: 0.56
+    - _TravelDistanceMult: 1
+    - _TravelDistancePointLights: 0.01
+    - _Travel_Distance: 0.0029
+    - _UVSec: 0
+    - _WorkflowMode: 0
+    - _ZWrite: 1
+    - _tsm_max: 1
+    - _tsm_min: 0
+    m_Colors:
+    - _Color: {r: 0.38004786, g: 0.32344493, b: 0.845, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _OcclusionColor: {r: 0.07338925, g: 0.049832206, b: 0.135, a: 1}
+    - _OverlaySpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ProfileColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecColor: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
+    - _TransmissionColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BuildTextureStacks: []

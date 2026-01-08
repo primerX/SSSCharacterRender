@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b2425a2284af743826c689403a4924, type: 3}
+  m_Name: Parallax
+  m_EditorClassIdentifier: 
+  m_functionInfo: "// Made with Amplify Shader Editor v1.9.2.2\n// Available at the
+    Unity Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=19202\nNode;AmplifyShaderEditor.CommentaryNode;14;242,-451.3;Inherit;False;324;186.6;shader_feature
+    do not work in build for the light pass;1;4;;1,0,0,1;0;0\nNode;AmplifyShaderEditor.ViewDirInputsCoordNode;11;-519,250.7;Inherit;False;Tangent;True;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3\nNode;AmplifyShaderEditor.FunctionOutput;0;599,-284;Inherit;False;True;-1;UV;0;False;1;0;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.TextureCoordinatesNode;5;-576.704,-505.8429;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.FunctionInput;12;-271.3911,-551.6262;Inherit;False;uv;2;0;False;1;0;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.RangedFloatNode;7;-608,118.7;Inherit;False;Property;_Depth_Center;Depth
+    Center;2;0;Create;False;0;0;0;True;0;False;0;0;-1;1;0;1;FLOAT;0\nNode;AmplifyShaderEditor.RangedFloatNode;1;-604,-116.3;Inherit;False;Property;_Depth;Depth;1;0;Create;True;0;0;0;True;0;False;0;0;0;1;0;1;FLOAT;0\nNode;AmplifyShaderEditor.RangedFloatNode;13;-536.5488,0.2386475;Inherit;False;Constant;_Float0;Float
+    0;4;0;Create;True;0;0;0;False;0;False;0.3;0;0;0;0;1;FLOAT;0\nNode;AmplifyShaderEditor.ToggleSwitchNode;15;318.4512,-130.7614;Inherit;False;Property;_EnableParallax;_EnableParallax;4;0;Create;True;0;0;0;False;0;False;0;True;2;0;FLOAT2;0,0;False;1;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.TexturePropertyNode;9;-578,-351.3;Inherit;True;Property;_BaseMap;BaseMap;3;1;[NoScaleOffset];Fetch;False;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1\nNode;AmplifyShaderEditor.CustomExpressionNode;8;-42,-147.3;Inherit;False;float2 
+    finalUV = 0@$float3 dir = viewDir@$    float2 maxOffset = dir.xy * (- Depth /
+    (abs(dir.z) + 0.001))@$\t$     float minSamples = 16.0@$    float maxSamples
+    = 128.0@$    float samples = saturate(3.0 * length(maxOffset))@$    float incr
+    = rcp(lerp(minSamples, maxSamples, samples))@$$    half2 tc0 = uv - DepthCenter
+    * maxOffset@$ float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a@$$for (float
+    i = incr@ i <= 1.0@ i += incr)$    {$        half2 tc = tc0 + maxOffset * i@$float
+    h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a@$if (i >= h1)$        {$\t\t\t//hit!
+    now interpolate$            float r1 = i, r0 = i - incr@$            float t
+    = (h0 - r0) / ((h0 - r0) + (-h1 + r1))@$            float r = (r0 - t * r0) +
+    t * r1@$            finalUV = tc0 + r * maxOffset@$            break@$       
+    }$else$        {$            finalUV = tc0 + maxOffset@$        }$        h0
+    = h1@$}$$return finalUV@;2;Create;5;True;Depth;FLOAT;0;In;;Inherit;False;True;DepthCenter;FLOAT;0;In;;Inherit;False;True;viewDir;FLOAT3;0,0,0;In;;Inherit;False;True;uv;FLOAT2;0,0;In;;Inherit;False;True;_BaseMap;SAMPLER2D;;In;;Inherit;False;Parallax;True;False;0;;False;5;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT2;0,0;False;4;SAMPLER2D;;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.StaticSwitch;4;292,-401.3;Inherit;False;Property;_EnableParallax;EnableParallax;0;0;Create;True;0;0;0;False;0;False;0;0;0;True;_ENABLE_PARALLAX;Toggle;2;Key0;Key1;Create;True;False;Fragment;9;1;FLOAT2;0,0;False;0;FLOAT2;0,0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT2;0,0;False;6;FLOAT2;0,0;False;7;FLOAT2;0,0;False;8;FLOAT2;0,0;False;1;FLOAT2;0\nNode;AmplifyShaderEditor.FunctionNode;18;-265.6537,238.1779;Inherit;False;SamplerStates;-1;;1;f1319a1607f225842baa459f162e8791;0;0;1;SAMPLERSTATE;0\nNode;AmplifyShaderEditor.CustomExpressionNode;17;-32.60016,58.70001;Inherit;False;float2 
+    finalUV = 0@$float3 dir = viewDir@$    float2 maxOffset = dir.xy * (- Depth /
+    (abs(dir.z) + 0.001))@$\t$     float minSamples = 16.0@$    float maxSamples
+    = 128.0@$    float samples = saturate(3.0 * length(maxOffset))@$    float incr
+    = rcp(lerp(minSamples, maxSamples, samples))@$$    half2 tc0 = uv@$// float h0
+    = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a@$ float h0 = 1 - SAMPLE_TEXTURE2D_LOD(
+    _BaseMap, ss, tc0, 0).a@$$for (float i = incr@ i <= 1.0@ i += incr)$    {$       
+    half2 tc = tc0 + maxOffset * i@$//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc,
+    0, 0)).a@$ float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a@$$if (i
+    >= h1)$        {$\t\t\t//hit! now interpolate$            float r1 = i, r0 =
+    i - incr@$            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1))@$           
+    float r = (r0 - t * r0) + t * r1@$            finalUV = tc0 + r * maxOffset@$           
+    break@$        }$else$        {$            finalUV = tc0 + maxOffset@$       
+    }$        h0 = h1@$}$$return finalUV@;2;Create;4;True;Depth;FLOAT;0;In;;Inherit;False;True;viewDir;FLOAT3;0,0,0;In;;Inherit;False;True;uv;FLOAT2;0,0;In;;Inherit;False;True;ss;SAMPLERSTATE;;In;;Inherit;False;My
+    Custom Expression;True;False;0;;False;4;0;FLOAT;0;False;1;FLOAT3;0,0,0;False;2;FLOAT2;0,0;False;3;SAMPLERSTATE;;False;1;FLOAT2;0\nWireConnection;0;0;15;0\nWireConnection;12;0;5;0\nWireConnection;15;0;12;0\nWireConnection;15;1;17;0\nWireConnection;8;0;1;0\nWireConnection;8;1;7;0\nWireConnection;8;2;11;0\nWireConnection;8;3;12;0\nWireConnection;4;1;12;0\nWireConnection;4;0;17;0\nWireConnection;17;0;1;0\nWireConnection;17;1;11;0\nWireConnection;17;2;12;0\nWireConnection;17;3;18;0\nASEEND*/\n//CHKSM=9E25B0216E444520B3B1153BC01AF70A9E4ABBF5"
+  m_functionName: 
+  m_description: 
+  m_additionalIncludes:
+    m_additionalIncludes: []
+    m_outsideIncludes: []
+  m_additionalPragmas:
+    m_additionalPragmas: []
+    m_outsidePragmas: []
+  m_additionalDirectives:
+    m_validData: 0
+    m_isDirty: 0
+    m_moduleName: ' Additional Directives'
+    m_independentModule: 1
+    m_customEdited: 0
+    m_additionalDirectives: []
+    m_shaderFunctionDirectives: []
+    m_nativeDirectives: []
+    m_nativeDirectivesIndex: -1
+    m_nativeDirectivesFoldout: 0
+    m_directivesSaveItems: []
+  m_nodeCategory: 3
+  m_headerStyle: 0
+  m_headerColor: {r: 1, g: 0.4, b: 0, a: 1}
+  m_customNodeCategory: 
+  m_previewPosition: 0
+  m_hidden: 0
+  m_url: 

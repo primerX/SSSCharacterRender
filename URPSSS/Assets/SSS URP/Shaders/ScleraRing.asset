@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78b2425a2284af743826c689403a4924, type: 3}
+  m_Name: ScleraRing
+  m_EditorClassIdentifier: 
+  m_functionInfo: "// Made with Amplify Shader Editor v1.9.2.2\n// Available at the
+    Unity Asset Store - http://u3d.as/y3X \n/*ASEBEGIN\nVersion=19202\nNode;AmplifyShaderEditor.FunctionInput;6;-1157.6,-286.9;Inherit;False;Input
+    to blend;3;1;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.LerpOp;1;-587.3761,-109.1033;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0\nNode;AmplifyShaderEditor.LerpOp;9;-609.6681,402.9276;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,1;False;2;FLOAT;0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.SamplerNode;2;-1872.215,75.31958;Inherit;True;Property;_ring;ring;61;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4\nNode;AmplifyShaderEditor.SimpleMultiplyOpNode;10;-1423.624,-61.74496;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0\nNode;AmplifyShaderEditor.FunctionInput;11;-1741.624,-115.745;Inherit;False;Blurred
+    lighting;3;0;False;1;0;FLOAT3;1,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.RangedFloatNode;12;-341.1362,-184.9542;Inherit;False;Constant;_Float0;Float
+    0;14;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0\nNode;AmplifyShaderEditor.LerpOp;13;-80.66211,-171.1692;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0\nNode;AmplifyShaderEditor.RangedFloatNode;14;-395.5083,-42.85001;Inherit;False;Property;_AlbedoOpacity;AlbedoInfluence;3;0;Create;False;0;0;0;True;0;False;1;0;0;1;0;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionOutput;0;469,-277;Inherit;False;True;-1;Albedo;0;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.FunctionOutput;4;-1052.659,139.028;Inherit;False;False;-1;Sclera
+    Ring Alpha;2;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.RangedFloatNode;16;-1442.783,163.7629;Inherit;False;Constant;_Float1;Float
+    1;4;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0\nNode;AmplifyShaderEditor.FunctionOutput;7;-17.6001,265.1;Inherit;False;False;-1;Normal;1;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.FunctionNode;30;-292.8633,319.1094;Inherit;False;Toggle
+    ScleraRing;1;;11;27e2f89b0c601184794ffae46d74611a;0;2;3;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.FunctionNode;31;-1296.687,161.0657;Inherit;False;Toggle
+    ScleraRing;1;;12;27e2f89b0c601184794ffae46d74611a;0;2;3;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.FunctionNode;32;170.1367,-277.8906;Inherit;False;Toggle
+    ScleraRing;1;;13;27e2f89b0c601184794ffae46d74611a;0;2;3;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0\nNode;AmplifyShaderEditor.FunctionNode;35;-2118.427,310.3486;Inherit;False;SamplerStates;-1;;14;f1319a1607f225842baa459f162e8791;0;0;3;SAMPLERSTATE;0;SAMPLERSTATE;2;SAMPLERSTATE;4\nNode;AmplifyShaderEditor.TexturePropertyNode;3;-2377.754,-86.11452;Inherit;True;Property;_ScleraRingMap;Sclera
+    Ring Map;0;0;Create;True;0;0;0;False;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1\nNode;AmplifyShaderEditor.FunctionNode;36;-2102.095,151.3113;Inherit;False;Scale
+    UV;0;;15;c976f0f516b451c44a1f2b80abc24840;0;1;1;FLOAT2;0,0;False;1;FLOAT2;0\nWireConnection;1;0;6;0\nWireConnection;1;1;10;0\nWireConnection;1;2;2;4\nWireConnection;9;0;6;0\nWireConnection;9;2;2;4\nWireConnection;2;0;3;0\nWireConnection;2;1;36;0\nWireConnection;2;7;35;4\nWireConnection;10;0;11;0\nWireConnection;10;1;2;0\nWireConnection;13;0;12;0\nWireConnection;13;1;1;0\nWireConnection;13;2;14;0\nWireConnection;0;0;32;0\nWireConnection;4;0;31;0\nWireConnection;7;0;30;0\nWireConnection;30;3;6;0\nWireConnection;30;2;9;0\nWireConnection;31;3;16;0\nWireConnection;31;2;2;4\nWireConnection;32;3;6;0\nWireConnection;32;2;13;0\nASEEND*/\n//CHKSM=FD8A1FCFB7C1E77ADC4C59086C2FE7746A190E32"
+  m_functionName: 
+  m_description: 
+  m_additionalIncludes:
+    m_additionalIncludes: []
+    m_outsideIncludes: []
+  m_additionalPragmas:
+    m_additionalPragmas: []
+    m_outsidePragmas: []
+  m_additionalDirectives:
+    m_validData: 0
+    m_isDirty: 0
+    m_moduleName: ' Additional Directives'
+    m_independentModule: 1
+    m_customEdited: 0
+    m_additionalDirectives: []
+    m_shaderFunctionDirectives: []
+    m_nativeDirectives: []
+    m_nativeDirectivesIndex: -1
+    m_nativeDirectivesFoldout: 0
+    m_directivesSaveItems: []
+  m_nodeCategory: 3
+  m_headerStyle: 0
+  m_headerColor: {r: 1, g: 0.4, b: 0, a: 1}
+  m_customNodeCategory: 
+  m_previewPosition: 0
+  m_hidden: 0
+  m_url: 

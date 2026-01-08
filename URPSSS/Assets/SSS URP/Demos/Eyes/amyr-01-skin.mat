@@ -1,0 +1,402 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: amyr-01-skin
+  m_Shader: {fileID: 4800000, guid: c25eff9ee7b7b2d4bb6f9253ba32d948, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _SPECULAR_SETUP
+  m_InvalidKeywords:
+  - _CAVITY_ON
+  - _DETAIL_MULX2
+  - _ENABLESUBSURFACE_ON
+  - _MASKWITHNORMALS_ON
+  - _MASK_WITH_NORMALS
+  - _METALLICSPECGLOSSMAP
+  - _NORMALMAP
+  - _OCCLUSIONMAP
+  - _TRANSMISSION_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 0f1fdb33118a3e246ba9f34a55682677, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: ef4a69c5f03812b45954fc8b1318b9ec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _CavityMap:
+        m_Texture: {fileID: 2800000, guid: 3230e8b92aa12ef458467db77e1b34c3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 30, y: 30}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 2800000, guid: 884f4ce41a5f49e468bdeb7ae95ed94f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IrisDetailShadowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IrisShadowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _IrisShadowMap1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 0f1fdb33118a3e246ba9f34a55682677, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normals_279cf40fb2d34a0980e292915cbc4ac2_ParallaxMap_3083911308_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 2800000, guid: 4501e8183d45ea24cadd04e5030057c8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlayAlbedo:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OverlaySpecular:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProfileMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProfileTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _RingShadowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SSS_LightPass:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ScaleMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ScleraRingMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 2800000, guid: 81929b187a80c98458d66b3f4e566f8a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubsurfaceAlbedo:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubsurfaceMap:
+        m_Texture: {fileID: 2800000, guid: 0f1fdb33118a3e246ba9f34a55682677, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SurfaceParallaxCustomFunction_9e904dabd91c438ca90b8bd90c551b99_ParallaxMap_5_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionGradient:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionMap:
+        m_Texture: {fileID: 2800000, guid: b65a95a316acfe04a99545631ba67080, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionTintMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _prueba:
+        m_Texture: {fileID: 2800000, guid: 0f1fdb33118a3e246ba9f34a55682677, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ttm:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - prueba:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - BasePassTransmission: 1
+    - DUMMY: 0
+    - DUMMY_1: 0
+    - DynamicPassTransmission: 1
+    - ENABLE_ALPHA_TEST: 0
+    - ENABLE_PARALLAX: 0
+    - EnvironmentReflectionsCompensation: 1.9
+    - NormalIntensity: 1
+    - PUPIL_DILATION: 0
+    - SSS_shader: 1
+    - SUBSURFACE_ALBEDO: 0
+    - SUBSURFACE_PARALLAX: 0
+    - TransmissionOcc: 1
+    - TransmissionRange: 5
+    - TransmissionShadows: 1
+    - WRAPPED_LIGHTING: 0
+    - _AlbedoInfluence: 1
+    - _AlbedoOpacity: 1
+    - _AlbedoTile: 1
+    - _AlphaClip: 0
+    - _AlphaCutoff: 0.5
+    - _AlphaToMask: 0
+    - _BOOLEAN: 0
+    - _Blend: 0
+    - _BlendModePreserveSpecular: 1
+    - _Blur: 0.027
+    - _BumpScale: 1
+    - _BumpTile: 1
+    - _CancelMax: 0.011
+    - _CancelMin: -1
+    - _Cavity: 1
+    - _CavityStrength: 0.456
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 0
+    - _Cookies: 1
+    - _Cookies1: 1
+    - _CorneaDepth: 0.2
+    - _CorneaMaskMax: 1
+    - _CorneaMaskMin: 0.9510869
+    - _CorneaOpacity: 0.1413043
+    - _CorneaSizeMax: 1
+    - _CorneaSizeMin: 0.9673913
+    - _CorneaTurbidity: 0
+    - _Cull: 2
+    - _Custom_Reflections: 0
+    - _Cutoff: 0.5
+    - _DEBUG: 0
+    - _Debug: 0
+    - _DebugMode: 3
+    - _Depth: 0.231
+    - _DepthCenter: 0
+    - _DepthTile: 20
+    - _Depth_Center: 0
+    - _DetailAlbedoMapScale: 1
+    - _DetailNormal: 1
+    - _DetailNormalIntensity: 1
+    - _DetailNormalMapScale: 0.707
+    - _DetailNormalMapTile: 62.1
+    - _DetasilNormalIntensity: 0.651
+    - _DiffuseRoughness: 0.944
+    - _Diffuseboost: 1
+    - _Dilation: -0.01
+    - _DilationMaskHardness: 0.4020753
+    - _DilationMaskRadius: 0.2327202
+    - _DisableReflections: 1
+    - _DisableUnitySpecular: 0
+    - _DstBlend: 0
+    - _DstBlendAlpha: 0
+    - _ENABLEPARALLAX: 0
+    - _ENABLE_DETAIL_NORMAL: 1
+    - _ENVIRONMENTREFLECTIONS_OFF: 0
+    - _EYEDILATION: 0
+    - _EnableDetailNormal: 0
+    - _EnableParallax: 0
+    - _EnableSubsurface: 1
+    - _EnableTransmissionGradient: 0
+    - _EnableUVScale: 0
+    - _Enable_SSS: 1
+    - _EnvironmentReflections: 1
+    - _EnvironmentReflectionsCompensation: 1
+    - _EnvironmentReflectionsIntensity: 1
+    - _EyeDilation: 0
+    - _EyeDilation1: 0
+    - _FresnelIntensity: 0
+    - _GI: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0.667
+    - _GlossyReflections: 1
+    - _GradientMax: 1
+    - _GradientMin: 0
+    - _IrisCaustics: 0
+    - _IrisMicroShadows: 0
+    - _IrisMicroShadows1: 0
+    - _IrisSelfShadowCircleHardness: 10
+    - _IrisSelfShadowCircleRadius: 0.3586957
+    - _IrisSelfShadowHardness: 10
+    - _IrisSelfShadowRadius: 0.3586957
+    - _IrisShadow: 0
+    - _IrisShadowDistance: 0
+    - _IrisShadowOpacity: 0
+    - _Keyword0: 0
+    - _Keyword1: 0
+    - _Keyword10: 0
+    - _Keyword11: 0
+    - _Keyword12: 0
+    - _Keyword13: 0
+    - _Keyword14: 0
+    - _Keyword2: 0
+    - _Keyword3: 0
+    - _Keyword4: 0
+    - _Keyword5: 0
+    - _Keyword6: 0
+    - _Keyword7: 0
+    - _Keyword8: 0
+    - _Keyword9: 0
+    - _LightClamp: 10
+    - _LightingModel: 0
+    - _MAIN_LIGHT: 0
+    - _MASK_WITH_NORMALS: 1
+    - _MaskWithNormals: 1
+    - _Maskwithnormals: 1
+    - _MaxDistance: 10
+    - _Metallic: 0
+    - _MicroShadowsDistance: 0.04
+    - _MicroShadowsOpacity: 1
+    - _Mode: 0
+    - _NormalIntensity: 1
+    - _Occlusion: 0.589
+    - _OcclusionStrength: 1
+    - _Occlusionfinalpass: 0.145
+    - _Occlusionlightpass: 0.839
+    - _Overlay: 0
+    - _OverlaySmoothness: 1
+    - _Parallax: 0.02
+    - _PrepareforGIbake: 0
+    - _QueueControl: 0
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _ReflectionsOff: 1
+    - _RingShadowDistance: 0
+    - _RingShadowOpacity: 1
+    - _SPECULARHIGHLIGHTS_OFF: 0
+    - _SSS_DebugMode: 4
+    - _SSS_WorkflowMode: 0
+    - _ScaleUV: 1
+    - _ScleraRing: 0
+    - _ScleraRing1: 0
+    - _Shadowsmax: 1
+    - _Shadowsmin: 0
+    - _Sizemax: 1
+    - _Sizemin: 0.9673913
+    - _Smoothness: 1
+    - _SmoothnessMult: 1
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlightIntensity: 3.3
+    - _SpecularHighlights: 1
+    - _SpecularOcclusion: 1
+    - _Specular_Occlusion: 1
+    - _SrcBlend: 1
+    - _SrcBlendAlpha: 1
+    - _StencilValue: 1
+    - _SubSurfaceParallax: -0.000363
+    - _Subsurface: 0.35
+    - _SubsurfaceAlbedoOpacity: 1
+    - _SubsurfaceAlbedoSaturation: 1
+    - _Surface: 0
+    - _TRANSMISSION: 0
+    - _Tiling: 1
+    - _TranslucencyDistanceFade: 2000
+    - _Transmission: 1
+    - _Transmission1: 0
+    - _Transmission_Bias: 0.003
+    - _Transmission_intensity: 0.79
+    - _TravelDistanceMult: 1
+    - _TravelDistancePointLights: 0.01
+    - _Travel_Distance: 0.034
+    - _UVSec: 0
+    - _View_Blur: 0
+    - _View_Light_Pass: 0
+    - _WorkflowMode: 0
+    - _Wrap: 0.412
+    - _ZWrite: 1
+    - _depth: 0.2
+    - _innerringmax: 0.9004377
+    - _innerringmin: 0.7338849
+    - _outerringmax: 0.2391304
+    - _outerringmin: 0.1086956
+    - _tsm_max: 1
+    - _tsm_min: 0
+    - refractiveIndex: 1
+    m_Colors:
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _OcclusionColor: {r: 0.74, g: 0.58335763, b: 0.52934307, a: 1}
+    - _OverlaySpecularColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ProfileColor: {r: 1, g: 0.6803157, b: 0.50377357, a: 1}
+    - _SpecColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}
+    - _TransmissionColor: {r: 1, g: 0.41743675, b: 0, a: 1}
+  m_BuildTextureStacks: []
+--- !u!114 &9028521906275316680
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7
