@@ -113,52 +113,27 @@ half3 DiffuseLightingFull(float3 WorldPos, half3 Normal, half Wrap, float3 World
 #if defined(_MAIN_LIGHT_SHADOWS_SCREEN) && !defined(_SURFACE_TYPE_TRANSPARENT)
     float4 shadowCoord = ComputeScreenPos(TransformWorldToHClip(WorldPos));
 #else
-    
     float4 shadowCoord = TransformWorldToShadowCoord(WorldPos);
 #endif
+
     Light DirectionalLight = GetMainLight();
     float3 Direction = DirectionalLight.direction;
     half3 Color = DirectionalLight.color;
     float DistanceAtten = DirectionalLight.distanceAttenuation;
-    //float3 Cookie = SampleDirectionalLightCookie(WorldPos);//TODO
     
     OUTPUT_LIGHTMAP_UV(lightmapUV, unity_LightmapST, lightmapUV);
     float4 Shadowmask = SAMPLE_SHADOWMASK(lightmapUV);
     float ShadowAtten = MainLightShadow(shadowCoord, WorldPos, Shadowmask, _MainLightOcclusionProbes);
     half3 Lambert = OrenNayar(Color * DistanceAtten, Direction, Normal, Wrap, WorldView);
     
-    //MixRealtimeAndBakedGI(DirectionalLight, Normal, GI);//delete
-    half3 MainLightDiffuse = /*Cookie **/ShadowAtten * Lambert /*+ GI*/;
-#if defined(_LIGHT_COOKIES)
-        MainLightDiffuse *= SampleMainLightCookie(WorldPos);
-#endif
+
+    half3 MainLightDiffuse = ShadowAtten * Lambert;
 
     //Additional Lights
-    half3 diffuseColor = 0;
+    half3 AdditionalsDiffuse = 0;
    
     uint pixelLightCount = GetAdditionalLightsCount();
     uint meshRenderingLayers = GetMeshRenderingLayer();
-
-    #if USE_FORWARD_PLUS
-	    for (uint lightIndex = 0; lightIndex < min(URP_FP_DIRECTIONAL_LIGHTS_COUNT, MAX_VISIBLE_LIGHTS); lightIndex++) {
-		    FORWARD_PLUS_SUBTRACTIVE_LIGHT_CHECK
-		    Light light = GetAdditionalLight(lightIndex, WorldPos, Shadowmask);
-        #ifdef _LIGHT_LAYERS
-                if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
-        #endif
-                {
-                    float3 attenuatedLightColor = light.color * (light.distanceAttenuation * light.shadowAttenuation);
-                    attenuatedLightColor = LightIntensityClamp(attenuatedLightColor, LightClamp); //Point lights are damn bright inside the range
-                    diffuseColor += OrenNayar(attenuatedLightColor, light.direction, Normal, Wrap, WorldView);
-                }
-            }
-    #endif
-
-	// For Foward+ the LIGHT_LOOP_BEGIN macro will use inputData.normalizedScreenSpaceUV, inputData.positionWS, so create that:
-    InputData inputData = (InputData) 0;
-    float4 screenPos = ComputeScreenPos(TransformWorldToHClip(WorldPos));
-    inputData.normalizedScreenSpaceUV = screenPos.xy / screenPos.w;
-    inputData.positionWS = WorldPos;
 
     LIGHT_LOOP_BEGIN(pixelLightCount)
 
@@ -169,12 +144,10 @@ half3 DiffuseLightingFull(float3 WorldPos, half3 Normal, half Wrap, float3 World
 		{
             float3 attenuatedLightColor = light.color * (light.distanceAttenuation * light.shadowAttenuation);
             attenuatedLightColor = LightIntensityClamp(attenuatedLightColor, LightClamp); //Point lights are damn bright inside the range
-            diffuseColor += OrenNayar(attenuatedLightColor, light.direction, Normal, Wrap, WorldView);
+            AdditionalsDiffuse += OrenNayar(attenuatedLightColor, light.direction, Normal, Wrap, WorldView);
         }
     
     LIGHT_LOOP_END
-
-    half3 AdditionalsDiffuse = diffuseColor;
     
     return MainLightDiffuse + AdditionalsDiffuse;
 
@@ -360,22 +333,22 @@ float TranslucentShadowmap(float TravelDistance, float TravelDistancePointLights
     int index = ComputeCascadeIndex(WorldPos);
     float correction = 1;
 	
-    if (index == 0)
-    {
-        correction *= _CascadeWeight.x;
-    }
-    if (index == 1)
-    {
-        correction *= _CascadeWeight.y;
-    }
-    if (index == 2)
-    {
-        correction *= _CascadeWeight.z;
-    }
-    if (index == 3)
-    {
-        correction *= _CascadeWeight.w;
-    }
+    // if (index == 0)
+    // {
+    //     correction *= _CascadeWeight.x;
+    // }
+    // if (index == 1)
+    // {
+    //     correction *= _CascadeWeight.y;
+    // }
+    // if (index == 2)
+    // {
+    //     correction *= _CascadeWeight.z;
+    // }
+    // if (index == 3)
+    // {
+    //     correction *= _CascadeWeight.w;
+    // }
 	
     half cascadeIndex = ComputeCascadeIndex(WorldPos);
 
@@ -417,47 +390,8 @@ float TranslucentShadowmap(float TravelDistance, float TravelDistancePointLights
     uint pixelLightCount = GetAdditionalLightsCount();
     uint meshRenderingLayers = GetMeshRenderingLayer();
     float4 Shadowmask = 1;
-    //#if defined(__INTELLISENSE__)
-    //#define USE_FORWARD_PLUS
-    //#define _LIGHT_LAYERS
-    //#endif
-    
-#if USE_FORWARD_PLUS
-	for (uint lightIndex = 0; lightIndex < min(URP_FP_DIRECTIONAL_LIGHTS_COUNT, MAX_VISIBLE_LIGHTS); lightIndex++) 
-    {
-		    FORWARD_PLUS_SUBTRACTIVE_LIGHT_CHECK
-		    Light light = GetAdditionalLight(lightIndex, WorldPos, Shadowmask);
-            #ifdef _LIGHT_LAYERS
-		    if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
-            #endif
-		    {
-    //aquí no entra nunca ¯\_(ツ)_/¯
-			    float3 LightColor = light.color;    
-                float3 attenuatedLightColor = LightColor * light.distanceAttenuation;
-                attenuatedLightColor = LightIntensityClamp(attenuatedLightColor, LightClamp); //Point lights are damn bright inside the range
-                float AdditionalTSM = ComputeAdditionalTSM(lightIndex, WorldPos, light.direction, TravelDistancePointLights);
-                float TransmissionAttenAvg = Thickness;
-                TransmissionAttenAvg *= (attenuatedLightColor.r + attenuatedLightColor.g + attenuatedLightColor.b) / 3;
-                TransmissionAttenAvg *= Intensity;
-                //Cancel    
-                if (MaskWithNormals == 1)    
-                    TransmissionAtten *= TransmissionMasking(WorldNormal, light.direction, Cancel);
-        
-                #ifdef _ENABLETRANSMISSIONGRADIENT_ON
-                    AdditionalLight += attenuatedLightColor * AdditionalTSM * TransmissionAtten * Intensity * SAMPLE_TEXTURE2D_LOD(_TransmissionGradient, ssClamp, TSM_Remap(AdditionalTSM * TransmissionAttenAvg, TSM_Grad.x, TSM_Grad.y), 0).rgb;
-                #else
-                   AdditionalLight += attenuatedLightColor * AdditionalTSM * TransmissionAtten * Intensity;
-                #endif
-            }
-	 }
-    
-#endif
 
-	// For Foward+ the LIGHT_LOOP_BEGIN macro will use inputData.normalizedScreenSpaceUV, inputData.positionWS, so create that:
-    InputData inputData = (InputData) 0;
-    float4 screenPos = ComputeScreenPos(TransformWorldToHClip(WorldPos));
-    inputData.normalizedScreenSpaceUV = screenPos.xy / screenPos.w;
-    inputData.positionWS = WorldPos;
+
     
     LIGHT_LOOP_BEGIN(pixelLightCount)
 
@@ -467,9 +401,6 @@ float TranslucentShadowmap(float TravelDistance, float TravelDistancePointLights
 	#endif
 		{
 		
-        //float3 attenuatedLightColor = light.color * (light.distanceAttenuation);
-        //float AdditionalTSM = ComputeAdditionalTSM(lightIndex, WorldPos, light.direction, TravelDistance);
-        //AdditionalLight += attenuatedLightColor * AdditionalTSM;
         float3 LightColor = light.color;  
         //TODO Cookies
         float3 attenuatedLightColor = LightColor * light.distanceAttenuation;

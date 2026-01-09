@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using SSS_URP;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -18,7 +17,7 @@ public class SeparableSubsurfacePass : ScriptableRenderPass
 
     public Material CopyLight = null;
 
-    SSS SSS_volume;
+    SeparableSSSVolume SSSS_volume;
 
 	private List<Vector4> KernelArray = new List<Vector4>();
 
@@ -60,19 +59,20 @@ public class SeparableSubsurfacePass : ScriptableRenderPass
         // cmd.SetGlobalTexture(XblurTexture.name, XblurTexture.nameID);
     
         ConfigureTarget(blurTexture2);
-        ConfigureClear(ClearFlag.None, Color.white);
+        // ConfigureClear(ClearFlag.None, Color.white);
+        ConfigureClear(ClearFlag.All, Color.black);
+        
     }
 
     public void SetKernel()
     {
 
-        SSS_volume = VolumeManager.instance.stack.GetComponent<SSS>();
-        if (SSS_volume != null && SSS_volume.IsActive())
+        SSSS_volume = VolumeManager.instance.stack.GetComponent<SeparableSSSVolume>();
+        if (SSSS_volume != null && SSSS_volume.IsActive())
         {
-            SubsurfaceScaler = SSS_volume.SubsurfaceScaler.value;
-            SubsurfaceColor = SSS_volume.SubsurfaceColor.value;
-            SubsurfaceFalloff = SSS_volume.SubsurfaceFalloff.value;
-            SamplerSteps = SSS_volume.SamplerSteps.value;
+            SubsurfaceScaler = SSSS_volume.SubsurfaceScaler.value;
+            SubsurfaceColor = SSSS_volume.SubsurfaceColor.value;
+            SubsurfaceFalloff = SSSS_volume.SubsurfaceFalloff.value;
         }
 
         Vector3 SSSC = Vector3.Normalize(new Vector3 (SubsurfaceColor.r, SubsurfaceColor.g, SubsurfaceColor.b));
@@ -98,24 +98,24 @@ public class SeparableSubsurfacePass : ScriptableRenderPass
         {
             SetKernel();
 
-            // cmd.Blit(null, blurTexture1, CopyLight);
+            cmd.Blit(null, blurTexture1, CopyLight);
 
-            // cmd.SetGlobalTexture("_MainTex", blurTexture1);
-            // cmd.Blit(blurTexture1, blurTexture2, SubsurfaceMat, 0);
-            // // cmd.SetGlobalTexture("_MainTex", XblurTexture);
-            // cmd.Blit(blurTexture2, blurTexture1, SubsurfaceMat, 1);
+            cmd.SetGlobalTexture("_MainTex", blurTexture1);
+            cmd.Blit(blurTexture1, blurTexture2, SubsurfaceMat, 0);
+            // cmd.SetGlobalTexture("_MainTex", XblurTexture);
+            cmd.Blit(blurTexture2, blurTexture1, SubsurfaceMat, 1);
 
-            // cmd.SetGlobalTexture("_SSS_Blur", blurTexture1);
+            cmd.SetGlobalTexture("_SSS_Blur", blurTexture1);
 
 
             // --------------------------------
-            CoreUtils.SetKeyword(SubsurfaceMat, "_FIRST_BLUR", true);
+            // CoreUtils.SetKeyword(SubsurfaceMat, "_FIRST_BLUR", true);
 
-            cmd.Blit(null, blurTexture1, SubsurfaceMat, 0);
+            // cmd.Blit(null, blurTexture1, SubsurfaceMat, 0);
 
-            cmd.Blit(blurTexture1, blurTexture2, SubsurfaceMat, 1);
+            // // cmd.Blit(blurTexture1, blurTexture2, SubsurfaceMat, 1);
 
-            cmd.SetGlobalTexture("_SSS_Blur", blurTexture2);
+            // cmd.SetGlobalTexture("_SSS_Blur", blurTexture1);
         }
 
         context.ExecuteCommandBuffer(cmd);

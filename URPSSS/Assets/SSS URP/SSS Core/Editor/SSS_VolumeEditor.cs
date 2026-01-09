@@ -15,10 +15,6 @@ namespace SSS_URP
         SerializedDataParameter Dither;
         SerializedDataParameter DitherScale;
         SerializedDataParameter FixPixelLeak;
-        SerializedDataParameter SubsurfaceScaler;
-        SerializedDataParameter SubsurfaceColor;
-        SerializedDataParameter SubsurfaceFalloff;
-        SerializedDataParameter SamplerSteps;
         SerializedDataParameter EnableProfileTest;
         SerializedDataParameter ProfileColorTest;
         SerializedDataParameter ProfileRadiusTest;
@@ -41,12 +37,6 @@ namespace SSS_URP
             Dither = Unpack(o.Find(x => x.Dither));
             DitherScale = Unpack(o.Find(x => x.DitherScale));
             FixPixelLeak = Unpack(o.Find(x => x.FixPixelLeak));
-
-            SubsurfaceScaler = Unpack(o.Find(x => x.SubsurfaceScaler));
-            SubsurfaceColor = Unpack(o.Find(x => x.SubsurfaceColor));
-            SubsurfaceFalloff = Unpack(o.Find(x => x.SubsurfaceFalloff));
-            SamplerSteps = Unpack(o.Find(x => x.SamplerSteps));
-
             EnableProfileTest = Unpack(o.Find(x => x.EnableProfileTest));
             ProfileColorTest = Unpack(o.Find(x => x.ProfileColorTest));
             ProfileRadiusTest = Unpack(o.Find(x => x.ProfileRadiusTest));
@@ -90,12 +80,6 @@ namespace SSS_URP
             PropertyField(DitherScale, EditorGUIUtility.TrTextContent(DitherScale.displayName, ""));
             PropertyField(FixPixelLeak, EditorGUIUtility.TrTextContent(FixPixelLeak.displayName, ""));
 
-            PropertyField(SubsurfaceScaler, EditorGUIUtility.TrTextContent(SubsurfaceScaler.displayName, ""));
-            PropertyField(SubsurfaceColor, EditorGUIUtility.TrTextContent(SubsurfaceColor.displayName, ""));
-            PropertyField(SubsurfaceFalloff, EditorGUIUtility.TrTextContent(SubsurfaceFalloff.displayName, ""));
-            PropertyField(SamplerSteps, EditorGUIUtility.TrTextContent(SamplerSteps.displayName, ""));
-
-
             m_EdgeTest.SetValue(EditorGUILayout.Foldout(m_EdgeTest.value, EditorGUIUtility.TrTextContent("Edge Test", "Reduce edge blur")));
             if (m_EdgeTest.value)
             {
@@ -106,8 +90,8 @@ namespace SSS_URP
                 if (EnableProfileTest.value.boolValue)
                 {
                     EditorGUI.indentLevel++;
-                    PropertyField(ProfileColorTest, EditorGUIUtility.TrTextContent("ï¿½RGB test", "Checks color only"));
-                    PropertyField(ProfileRadiusTest, EditorGUIUtility.TrTextContent("ï¿½Radius test", "Use profile alpha x radius to check edges"));
+                    PropertyField(ProfileColorTest, EditorGUIUtility.TrTextContent("·RGB test", "Checks color only"));
+                    PropertyField(ProfileRadiusTest, EditorGUIUtility.TrTextContent("·Radius test", "Use profile alpha x radius to check edges"));
                     EditorGUI.indentLevel--;
                 }
 
@@ -116,7 +100,7 @@ namespace SSS_URP
                 if (EnableNormalTest.value.boolValue)
                 {
                     EditorGUI.indentLevel++;
-                    PropertyField(NormalTest, EditorGUIUtility.TrTextContent("ï¿½Radius test", ""));
+                    PropertyField(NormalTest, EditorGUIUtility.TrTextContent("·Radius test", ""));
                     EditorGUI.indentLevel--;
                 }
 

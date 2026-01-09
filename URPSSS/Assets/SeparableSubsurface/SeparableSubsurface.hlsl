@@ -7,7 +7,7 @@
 #define DistanceToProjectionWindow 5.671281819617709             //1.0 / tan(0.5 * radians(20));
 #define DPTimes300 1701.384545885313                             //DistanceToProjectionWindow * 300
 // #define SamplerSteps 25
-#define SamplerSteps 11
+#define SamplerSteps 25
 
 TEXTURE2D(_MainTex);
 SAMPLER(sampler_MainTex);
@@ -45,13 +45,14 @@ Varyings Vert(Attributes input)
     // URP 顶点变换
     output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
 
-    #if _FIRST_BLUR
-        output.uv = TRANSFORM_TEX(input.uv, _SSS_LightPass);
-    #else
-        output.uv = TRANSFORM_TEX(input.uv, _MainTex);
-    #endif
+    // #if _FIRST_BLUR
+    //     output.uv = TRANSFORM_TEX(input.uv, _SSS_LightPass);
+    // #else
+    //     output.uv = TRANSFORM_TEX(input.uv, _MainTex);
+    // #endif
 
-    // output.uv = TRANSFORM_TEX(input.uv, _SSS_LightPass);
+    // output.uv = TRANSFORM_TEX(input.uv, _MainTex);
+    output.uv = input.uv;
 
     return output;
 }
@@ -72,13 +73,13 @@ half4 SSS(half4 SceneColor, float2 UV, float2 SSSIntencity)
     {
         float2 SSSUV = UV +  _Kernel[i].a * UVOffset;
 
-        #if _FIRST_BLUR
-            half4 SSSSceneColor = SAMPLE_TEXTURE2D(_SSS_LightPass, sampler_SSS_LightPass, SSSUV);
-        #else
-            half4 SSSSceneColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, SSSUV);
-        #endif
+        // #if _FIRST_BLUR
+        //     half4 SSSSceneColor = SAMPLE_TEXTURE2D(_SSS_LightPass, sampler_SSS_LightPass, SSSUV);
+        // #else
+        //     half4 SSSSceneColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, SSSUV);
+        // #endif
 
-        // half4 SSSSceneColor = SAMPLE_TEXTURE2D(_SSS_LightPass, sampler_SSS_LightPass, SSSUV);
+        half4 SSSSceneColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, SSSUV);
 
         float SSSDepth = LinearEyeDepth(SampleSceneDepth(SSSUV), _ZBufferParams).r;
 

@@ -15,13 +15,6 @@ namespace SSS_URP
         public FloatParameter Dither = new ClampedFloatParameter(.2f, 0, 1);
         public FloatParameter DitherScale = new ClampedFloatParameter(10, 0, 20);
         public FloatParameter FixPixelLeak = new ClampedFloatParameter(.2f, 0, 1);
-
-        public FloatParameter SubsurfaceScaler = new ClampedFloatParameter(2f, 0, 6);
-        public ColorParameter SubsurfaceColor = new ColorParameter(Color.red);
-        public ColorParameter SubsurfaceFalloff = new ColorParameter(Color.red);
-        public IntParameter SamplerSteps = new ClampedIntParameter(11, 3, 25);
-
-
         public FloatParameter DepthTest = new ClampedFloatParameter(.9f, 0, 1);
         public BoolParameter EnableProfileTest = new BoolParameter(false);
         [Tooltip("Searches for color discontinuities")]

@@ -10,9 +10,13 @@ Shader "Hidden/SeparableSubsurfaceScatter"
         Tags { "RenderType"="Opaque" "RenderPipeline"="UniversalPipeline" }
         
         // 屏幕后处理的标准状态
-        ZTest Always
-        ZWrite Off
-        Cull Off
+        // ZTest Always
+        // ZWrite Off
+        // Cull Off
+
+        ZTest LEqual
+        ZWrite On
+        Cull Back
 
         // Stencil{
         //     Ref 5
@@ -41,8 +45,8 @@ Shader "Hidden/SeparableSubsurfaceScatter"
             half4 FragX(Varyings input) : SV_Target
             {
                 // 采样主纹理
-                // half4 SceneColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
-                half4 SceneColor = SAMPLE_TEXTURE2D(_SSS_LightPass, sampler_SSS_LightPass, input.uv);
+                half4 SceneColor = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv);
+                // half4 SceneColor = SAMPLE_TEXTURE2D(_SSS_LightPass, sampler_SSS_LightPass, input.uv);
                 
                 // 计算 SSS 强度
                 float SSSIntencity = (_SSSScale * _CameraDepthTexture_TexelSize.x);

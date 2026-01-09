@@ -3,7 +3,7 @@ Shader "Shenkong/SSS MyOjbect"
     Properties
     {
         [NoScaleOffset]_BaseMap("BaseMap", 2D) = "white" {}
-        _BaseColor ("Base Color", Color) = (1, 1, 1, 1)
+        _Color ("Base Color", Color) = (1, 1, 1, 1)
 
         [NoScaleOffset]_SubsurfaceMap("Surface Map", 2D) = "white" {}
         _Subsurface("SurfaceMap Visibility", Range(0, 1)) = 1
@@ -16,8 +16,20 @@ Shader "Shenkong/SSS MyOjbect"
         _BumpMap ("Normal Map", 2D) = "bump" {}
         _NormalIntensity("Normal Scale", Range(0, 3)) = 1
 
+
+        [Header(Occlusion)]
+		[NoScaleOffset]_OcclusionMap("OcclusionMap", 2D) = "white" {}
+		_OcclusionColor("Occlusion Color", Color) = (0,0,0,0)
+		[Toggle]_Cavity("_Cavity", Range( 0 , 1)) = 1
+		_CavityStrength("_Cavity Strength", Range( 0 , 1)) = 0
+		_Occlusionfinalpass("Occlusion final pass", Range( 0 , 1)) = 0.5
+		_Occlusionlightpass("Occlusion light pass", Range( 0 , 1)) = 0.5
+		_SpecularOcclusion("Specular Occlusion", Range( 0 , 1)) = 1
+
+        [Header(Transmission)]
         // TransmissionSetting
         _TransmissionMap("TransmissionMap/Thickness", 2D) = "white" {}
+		_TransmissionColor("TransmissionColor", Color) = (0.7830189,0.5276353,0.2245639,0)
         _Transmission_intensity("Transmission Intensity", Range( 0 , 5)) = 0.5
 
         _TransmissionGradient("TransmissionGradient", 2D) = "white" {}
@@ -27,7 +39,7 @@ Shader "Shenkong/SSS MyOjbect"
 		_Travel_Distance("Travel Distance MainLight", Range( 0 , 0.02)) = 0.01
 		_TravelDistancePointLights("Travel Distance PointLights", Range( 0 , 0.02)) = 0.01
 
-		[Enum(x1,1,x2,2,x4,4,x8,8,x16,16)] _TravelDistanceMult("Multiplier", Range( 1 , 6)) = 1
+		[Enum(x1,1,x2,2,x4,4,x8,8,x16,16)] _TravelDistanceMult("TravelDistance Multiplier", Range( 1 , 6)) = 1
 		_Transmission_Bias("Transmission Bias", Range( 0 , 0.5)) = 0
 		_CancelMin("CancelMin", Range( -1 , 0)) = -0.5
 		_CancelMax("CancelMax", Range( 0 , 1)) = 0
@@ -35,10 +47,12 @@ Shader "Shenkong/SSS MyOjbect"
 		[Toggle]_MaskWithNormals("Mask with normals", Range( 0 , 1)) = 0
 
         [Space]
-        // SpecularSetting
+        [Header(SpecSetting)]
+        [NoScaleOffset]_SpecGlossMap("Specular Map", 2D) = "white" {}
         _SpecColor("Specular Color", Color) = (0.08490568,0.08490568,0.08490568,1)
 		_Smoothness("Smoothness", Range( 0 , 1)) = 0.65
-		// _CavityStrength("Cavity", Range( 0 , 1)) = 0
+		[Enum(x1,1,x2,2,x4,4,x8,8,x16,16)]_SmoothnessMult("Multiplier", Range( 1 , 6)) = 1
+
 		// _FresnelIntensity("FresnelIntensity", Range( 0 , 1)) = 0.55
         // _EnvironmentReflectionsIntensity("EnvironmentReflectionsIntensity", Range( 0 , 3)) = 1
 		_SpecularHighlightIntensity("SpecularHighlightIntensity", Range( 0 , 20)) = 1
@@ -61,6 +75,13 @@ Shader "Shenkong/SSS MyOjbect"
         Pass
         {
 			Name "SSSObjct Forward"
+            // Tags { "LightMode" = "UniversalForward" }
+
+            Stencil{
+                Ref 1
+                comp Always
+                pass Replace
+            }
 
             HLSLPROGRAM
             // 声明顶点和片元着色器函数名
@@ -94,7 +115,7 @@ Shader "Shenkong/SSS MyOjbect"
             // 定义 CBUFFER (常量缓冲区) 以支持 SRP Batcher 优化
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
-                half4 _BaseColor;
+                half4 _Color;
 
                 half _Subsurface;
 
@@ -104,7 +125,17 @@ Shader "Shenkong/SSS MyOjbect"
 
                 half _NormalIntensity;
 
+                float _SmoothnessMult;
+
+                // Occusion
+                half4 _OcclusionColor;
+                float _Cavity;
+                float _Occlusionlightpass;
+                float _Occlusionfinalpass;
+                float _SpecularOcclusion;
+
                 // Transmission
+                half _TransmissionColor;
                 float _Travel_Distance;
                 float _TravelDistancePointLights;
 
@@ -135,6 +166,9 @@ Shader "Shenkong/SSS MyOjbect"
             TEXTURE2D(_SubsurfaceMap);     SAMPLER(sampler_SubsurfaceMap);
             TEXTURE2D(_BumpMap);      SAMPLER(sampler_BumpMap);
 
+            TEXTURE2D(_OcclusionMap);            SAMPLER(sampler_OcclusionMap);
+            TEXTURE2D(_SpecGlossMap);            SAMPLER(sampler_SpecGlossMap);
+
             TEXTURE2D(_TransmissionGradient);      SAMPLER(sampler_TransmissionGradient);
             TEXTURE2D(_TransmissionMap);      SAMPLER(sampler_TransmissionMap);
 
@@ -161,6 +195,11 @@ Shader "Shenkong/SSS MyOjbect"
                 float3 bitangentWS : TEXCOORD4;
 
                 float4 screenPos  : TEXCOORD5; // 传递屏幕坐标
+
+                float4 ase_texcoord4 : TEXCOORD6;
+				float4 ase_texcoord5 : TEXCOORD7;
+				float4 ase_texcoord6 : TEXCOORD8;
+
             };
 
             // 顶点着色器
@@ -181,6 +220,15 @@ Shader "Shenkong/SSS MyOjbect"
                 output.tangentWS = tangentWS;
                 output.bitangentWS = normalInput.bitangentWS;
 
+                // ASE normalWS
+				float3 ase_worldTangent = TransformObjectToWorldDir(input.tangentOS.xyz);
+				output.ase_texcoord4.xyz = ase_worldTangent;
+				float3 ase_worldNormal = TransformObjectToWorldNormal(input.normalOS);
+				output.ase_texcoord5.xyz = ase_worldNormal;
+				float ase_vertexTangentSign = input.tangentOS.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
+				float3 ase_worldBitangent = cross( ase_worldNormal, ase_worldTangent ) * ase_vertexTangentSign;
+				output.ase_texcoord6.xyz = ase_worldBitangent;
+
                 // 3. UV 变换
                 output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
                 
@@ -196,16 +244,29 @@ Shader "Shenkong/SSS MyOjbect"
                 // --- 准备数据 ---
                 float3 positionWS = input.positionWS;
 
-
                 // 采样基础纹理并叠加颜色
                 half4 baseMap = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv);
-                half3 albedo = baseMap.rgb * _BaseColor.rgb;
+                half3 albedo = baseMap.rgb * _Color.rgb;
 
                 float2 screenUV = input.screenPos.xy / input.screenPos.w;
                 half4 sssBlur = SAMPLE_TEXTURE2D(_SSS_Blur, sampler_SSS_Blur, screenUV);
                 
                 half4 diffuseColor = baseMap * sssBlur;
                 
+                // Occlusion
+                half4 occlusionMap = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, input.uv);
+                half4 occlusionColor = lerp(_OcclusionColor, 1, occlusionMap.r);
+                half4 occlusionFinalPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionfinalpass);
+                half4 occlusionLightPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionlightpass); 
+
+                half specularOcclusion = lerp(1, occlusionMap.g, _SpecularOcclusion);
+
+                half cavity = lerp(1, occlusionMap.b, _CavityStrength);
+ 
+                cavity = lerp(1, cavity, _Cavity);
+
+                diffuseColor *= occlusionFinalPass;
+
                 // 采样法线贴图并解包 (UnpackNormalScale 处理了纹理压缩和强度缩放)
                 float4 normal = SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, input.uv);
                 half3 normalTS = UnpackNormalScale(normal, _NormalIntensity);
@@ -213,16 +274,35 @@ Shader "Shenkong/SSS MyOjbect"
 
 				normalWS = normalize(normalWS);
 
+                // ASE 计算 NormalWS 方法
+				float3 ase_worldTangent = input.ase_texcoord4.xyz;
+				float3 ase_worldNormal = input.ase_texcoord5.xyz;
+				float3 ase_worldBitangent = input.ase_texcoord6.xyz;
+
+				float3 tanToWorld0 = float3( ase_worldTangent.x, ase_worldBitangent.x, ase_worldNormal.x );
+				float3 tanToWorld1 = float3( ase_worldTangent.y, ase_worldBitangent.y, ase_worldNormal.y );
+				float3 tanToWorld2 = float3( ase_worldTangent.z, ase_worldBitangent.z, ase_worldNormal.z );
+				float3 tanNormal610 = normalTS;
+				float3 worldNormal610 = normalize( float3(dot(tanToWorld0,tanNormal610), dot(tanToWorld1,tanNormal610), dot(tanToWorld2,tanNormal610)) );
+                normalWS = worldNormal610;
+
+
                 half3 viewWS = normalize(GetWorldSpaceViewDir(input.positionWS));
-                float2 lightmapUV = float2(1, 1);
+                float2 lightmapUV = input.uv;
                 float3 GI = float3(1, 1, 1);
                 
-                half3 specularColor = SpecularLightingFull(positionWS, normalWS, _SpecColor,
-                                    _Smoothness, viewWS, lightmapUV);
+                // 高光
+                half4 specGlossMap = SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, input.uv);
+                half3 specColor = specGlossMap.rgb * _SpecColor * cavity * cavity;
 
-                specularColor *= _SpecularHighlightIntensity;
+                half smoothness = specGlossMap.a * _SpecColor.a * _Smoothness;
+
+                half3 finalSpec = SpecularLightingFull(positionWS, normalWS, specColor,
+                                    smoothness, viewWS, lightmapUV);
+
+                finalSpec *= _SpecularHighlightIntensity * specularOcclusion;
                 
-                half3 finalColor = diffuseColor.rgb + specularColor;
+                half3 finalColor = diffuseColor.rgb + finalSpec;
 
                 return half4(finalColor, 1);
 
@@ -376,5 +456,5 @@ Shader "Shenkong/SSS MyOjbect"
 
     }
 
-    CustomEditor "SubsurfaceShaderGUI"
+    // CustomEditor "SubsurfaceShaderGUI"
 }

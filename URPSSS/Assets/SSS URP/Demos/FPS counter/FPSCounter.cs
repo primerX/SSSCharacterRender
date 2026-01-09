@@ -18,7 +18,6 @@ namespace SSS_Demo
 
         private void Start()
         {
-            Application.targetFrameRate = 120;
             m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
             m_Text = GetComponent<Text>();
         }

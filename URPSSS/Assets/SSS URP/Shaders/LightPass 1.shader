@@ -1,6 +1,6 @@
 // Made with Amplify Shader Editor v1.9.2.2
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "Hidden/LightPass_Modify"
+Shader "Hidden/LightPass 1"
 {
 	Properties
 	{
@@ -43,11 +43,7 @@ Shader "Hidden/LightPass_Modify"
 		_GradientMax("GradientMax", Range( 0 , 4)) = 1
 		[Toggle]_EnableSubsurface("_EnableSubsurface", Float) = 0
 		[NoScaleOffset]_BaseMap("BaseMap", 2D) = "white" {}
-		[Toggle]_ScleraRing("Sclera Ring", Float) = 0
-		_ScleraRingMap("Sclera Ring Map", 2D) = "white" {}
-		_ScaleUV("Scale", Range( 0 , 2)) = 1
-		[Toggle]_EnableUVScale("EnableUVScale", Float) = 0
-		_AlbedoOpacity("AlbedoInfluence", Range( 0 , 1)) = 1
+		[Toggle]_IrisShadow("Iris Shadow", Float) = 0
 		[Toggle]_Transmission("_Transmission", Float) = 0
 		_DiffuseRoughness("DiffuseRoughness", Range( 0 , 1)) = 0
 		_IrisShadowMap("_IrisShadowMap", 2D) = "white" {}
@@ -61,12 +57,21 @@ Shader "Hidden/LightPass_Modify"
 		_IrisShadowOpacity("IrisShadowOpacity", Range( 0 , 1)) = 0.3586957
 		_IrisSelfShadowCircleHardness("IrisSelfShadowCircleHardness", Range( 0 , 10)) = 10
 		[Toggle(_DEBUG_ON)] _Debug("Debug", Float) = 0
+		[Toggle]_ScleraRing("Sclera Ring", Float) = 0
+		_ScleraRingMap("Sclera Ring Map", 2D) = "white" {}
+		_AlbedoOpacity("AlbedoInfluence", Range( 0 , 1)) = 1
+		[Toggle(_ENABLE_DETAIL_NORMAL)] _EnableDetailNormal("Enable Detail Normal", Float) = 0
+		_Tiling("Tiling", Float) = 1
+		_ScaleUV("Scale", Range( 0 , 2)) = 1
+		[Toggle]_EnableUVScale("EnableUVScale", Float) = 0
+		[Toggle]_EnableParallax("_EnableParallax", Float) = 0
 		[NoScaleOffset][Normal]_BumpMap("Normal", 2D) = "bump" {}
 		_NormalIntensity("Normal Intensity", Range( 0 , 1)) = 1
 		[NoScaleOffset][Normal]_DetailNormalMap("Detail Normal Map", 2D) = "bump" {}
 		_DetailNormalIntensity("Detail Normal Intensity", Range( 0 , 1)) = 1
 		_DetailNormalMapTile("Tile", Float) = 10
 		[NoScaleOffset]_OcclusionMap("OcclusionMap", 2D) = "white" {}
+		_OcclusionColor("Occlusion Color", Color) = (0,0,0,0)
 		[Toggle]_Cavity("_Cavity", Range( 0 , 1)) = 1
 		_CavityStrength("Cavity", Range( 0 , 1)) = 0
 		_Occlusionfinalpass("Occlusion final pass", Range( 0 , 1)) = 0.5
@@ -311,10 +316,13 @@ Shader "Hidden/LightPass_Modify"
 				#define ENABLE_TERRAIN_PERPIXEL_NORMAL
 			#endif
 
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_TANGENT
 			#define ASE_NEEDS_FRAG_WORLD_NORMAL
+			#define ASE_NEEDS_FRAG_WORLD_BITANGENT
 			#define ASE_NEEDS_FRAG_WORLD_VIEW_DIR
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma multi_compile_local_fragment __ _ENABLETRANSMISSIONGRADIENT_ON
+			#pragma shader_feature_local _ENABLE_DETAIL_NORMAL
 			#pragma shader_feature_local_fragment _DEBUG_ON
 			#include "Common.hlsl"
 
@@ -361,37 +369,36 @@ Shader "Hidden/LightPass_Modify"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -401,15 +408,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -460,15 +471,103 @@ Shader "Hidden/LightPass_Modify"
 			SAMPLER(sampler_TransmissionTintMap);
 			TEXTURE2D(_TransmissionMap);
 			SAMPLER(sampler_TransmissionMap);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso8);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso4);
+			TEXTURE2D(_ScleraRingMap);
 			TEXTURE2D(_TransmissionGradient);
 			SAMPLER(sampler_Linear_Clamp);
-			TEXTURE2D(_ScleraRingMap);
-			SAMPLER(sampler_Trilinear_Repeat_Aniso4);
 
 
-			float3 LightingFull2_g808( float3 WorldPos, float3 Normal, float r, float3 WorldView, float2 lightmapUV, float3 GI, float LightClamp )
+			float2 MyCustomExpression17_g843( float Depth, float3 viewDir, float2 uv, SamplerState ss )
 			{
-				return DiffuseLightingFull(WorldPos, Normal, r, WorldView, lightmapUV, GI, LightClamp);
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g840( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g857( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g854( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
 			}
 			
 			float3 ASEBakedGI( float3 normalWS, float2 uvStaticLightmap, bool applyScaling )
@@ -480,6 +579,149 @@ Shader "Hidden/LightPass_Modify"
 			#else
 				return SampleSH(normalWS);
 			#endif
+			}
+			
+			float3 LightingFull2_g792( float3 WorldPos, float3 Normal, float r, float3 WorldView, float2 lightmapUV, float3 GI, float LightClamp )
+			{
+				return DiffuseLightingFull(WorldPos, Normal, r, WorldView, lightmapUV, GI, LightClamp);
+			}
+			
+			float2 MyCustomExpression17_g824( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g821( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g817( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g814( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g886( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g883( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
 			}
 			
 			float Transmission3_g880( float TravelDistance, float TravelDistancePointLights, float3 WorldPos, float3 ViewPos, out float3 experimental, float3 WorldNormal, float2 Cancel, float MaskWithNormals, TEXTURE2D(TransmissionGradient), SamplerState ssClamp, float2 TSM_Grad, float Thickness, float Intensity, float LightClamp )
@@ -699,37 +941,176 @@ Shader "Hidden/LightPass_Modify"
 
 				float3 temp_cast_0 = (0.0).xxx;
 				
-				float2 uv_BumpMap1_g832 = IN.ase_texcoord8.xy;
-				float3 unpack1_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_BumpMap, uv_BumpMap1_g832 ), _NormalIntensity );
+				float2 texCoord15_g839 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g842 = ( texCoord15_g839 * _Tiling );
+				float2 temp_cast_1 = (0.5).xx;
+				float2 temp_output_12_0_g843 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g842 - temp_cast_1 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g842 ));
+				float Depth17_g843 = _Depth;
+				float3 tanToWorld0 = float3( WorldTangent.x, WorldBiTangent.x, WorldNormal.x );
+				float3 tanToWorld1 = float3( WorldTangent.y, WorldBiTangent.y, WorldNormal.y );
+				float3 tanToWorld2 = float3( WorldTangent.z, WorldBiTangent.z, WorldNormal.z );
+				float3 ase_tanViewDir =  tanToWorld0 * WorldViewDirection.x + tanToWorld1 * WorldViewDirection.y  + tanToWorld2 * WorldViewDirection.z;
+				ase_tanViewDir = SafeNormalize( ase_tanViewDir );
+				float3 viewDir17_g843 = ase_tanViewDir;
+				float2 uv17_g843 = temp_output_12_0_g843;
+				SamplerState ss17_g843 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g843 = MyCustomExpression17_g843( Depth17_g843 , viewDir17_g843 , uv17_g843 , ss17_g843 );
+				float2 temp_output_4_0_g840 = (( _EnableParallax )?( localMyCustomExpression17_g843 ):( temp_output_12_0_g843 ));
+				float2 inUV8_g840 = temp_output_4_0_g840;
+				float2 temp_output_7_0_g841 = ( ( temp_output_4_0_g840 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g841 = dot( temp_output_7_0_g841 , temp_output_7_0_g841 );
+				float ScaleMask8_g840 = ( 1.0 - pow( saturate( dotResult2_g841 ) , 0.15 ) );
+				float Dilation8_g840 = _Dilation;
+				float2 localDilationnotexture8_g840 = Dilationnotexture8_g840( inUV8_g840 , ScaleMask8_g840 , Dilation8_g840 );
+				float2 temp_output_26_0_g832 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g840 : temp_output_4_0_g840 );
+				float3 unpack1_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_Trilinear_Repeat_Aniso4, temp_output_26_0_g832 ), _NormalIntensity );
 				unpack1_g832.z = lerp( 1, unpack1_g832.z, saturate(_NormalIntensity) );
 				float3 normalizeResult20_g832 = normalize( unpack1_g832 );
+				float3 unpack8_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _DetailNormalMap, sampler_Trilinear_Repeat_Aniso4, ( temp_output_26_0_g832 * _DetailNormalMapTile ) ), _DetailNormalIntensity );
+				unpack8_g832.z = lerp( 1, unpack8_g832.z, saturate(_DetailNormalIntensity) );
+				#ifdef _ENABLE_DETAIL_NORMAL
+				float3 staticSwitch15_g832 = BlendNormal( normalizeResult20_g832 , unpack8_g832 );
+				#else
+				float3 staticSwitch15_g832 = normalizeResult20_g832;
+				#endif
+				float3 temp_output_6_0_g833 = staticSwitch15_g832;
+				float2 texCoord8_g838 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g838 = texCoord8_g838;
+				float2 temp_cast_2 = (0.5).xx;
+				float4 tex2DNode2_g833 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g838 - temp_cast_2 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g838 )) );
+				float3 lerpResult9_g833 = lerp( temp_output_6_0_g833 , float3( 0,0,1 ) , tex2DNode2_g833.a);
 				
-				float3 WorldPos2_g808 = WorldPosition;
-				float3 temp_output_6_0_g808 = WorldNormal;
-				float3 Normal2_g808 = temp_output_6_0_g808;
-				float r2_g808 = _DiffuseRoughness;
-				float3 WorldView2_g808 = WorldViewDirection;
-				float2 lightmapUV2_g808 = float2( 0,0 );
-				float3 GI2_g808 = float3( 0,0,0 );
+				float3 WorldPos2_g792 = WorldPosition;
+				float2 texCoord15_g853 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g856 = ( texCoord15_g853 * _Tiling );
+				float2 temp_cast_3 = (0.5).xx;
+				float2 temp_output_12_0_g857 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g856 - temp_cast_3 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g856 ));
+				float Depth17_g857 = _Depth;
+				float3 viewDir17_g857 = ase_tanViewDir;
+				float2 uv17_g857 = temp_output_12_0_g857;
+				SamplerState ss17_g857 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g857 = MyCustomExpression17_g857( Depth17_g857 , viewDir17_g857 , uv17_g857 , ss17_g857 );
+				float2 temp_output_4_0_g854 = (( _EnableParallax )?( localMyCustomExpression17_g857 ):( temp_output_12_0_g857 ));
+				float2 inUV8_g854 = temp_output_4_0_g854;
+				float2 temp_output_7_0_g855 = ( ( temp_output_4_0_g854 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g855 = dot( temp_output_7_0_g855 , temp_output_7_0_g855 );
+				float ScaleMask8_g854 = ( 1.0 - pow( saturate( dotResult2_g855 ) , 0.15 ) );
+				float Dilation8_g854 = _Dilation;
+				float2 localDilationnotexture8_g854 = Dilationnotexture8_g854( inUV8_g854 , ScaleMask8_g854 , Dilation8_g854 );
+				float2 temp_output_26_0_g846 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g854 : temp_output_4_0_g854 );
+				float3 unpack1_g846 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_Trilinear_Repeat_Aniso4, temp_output_26_0_g846 ), _NormalIntensity );
+				unpack1_g846.z = lerp( 1, unpack1_g846.z, saturate(_NormalIntensity) );
+				float3 normalizeResult20_g846 = normalize( unpack1_g846 );
+				float3 unpack8_g846 = UnpackNormalScale( SAMPLE_TEXTURE2D( _DetailNormalMap, sampler_Trilinear_Repeat_Aniso4, ( temp_output_26_0_g846 * _DetailNormalMapTile ) ), _DetailNormalIntensity );
+				unpack8_g846.z = lerp( 1, unpack8_g846.z, saturate(_DetailNormalIntensity) );
+				#ifdef _ENABLE_DETAIL_NORMAL
+				float3 staticSwitch15_g846 = BlendNormal( normalizeResult20_g846 , unpack8_g846 );
+				#else
+				float3 staticSwitch15_g846 = normalizeResult20_g846;
+				#endif
+				float3 temp_output_6_0_g847 = staticSwitch15_g846;
+				float2 texCoord8_g852 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g852 = texCoord8_g852;
+				float2 temp_cast_4 = (0.5).xx;
+				float4 tex2DNode2_g847 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g852 - temp_cast_4 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g852 )) );
+				float3 lerpResult9_g847 = lerp( temp_output_6_0_g847 , float3( 0,0,1 ) , tex2DNode2_g847.a);
+				float3 temp_output_600_0 = (( _ScleraRing )?( lerpResult9_g847 ):( temp_output_6_0_g847 ));
+				float3 tanNormal53 = temp_output_600_0;
+				float3 worldNormal53 = float3(dot(tanToWorld0,tanNormal53), dot(tanToWorld1,tanNormal53), dot(tanToWorld2,tanNormal53));
+				float3 temp_output_6_0_g792 = worldNormal53;
+				float3 Normal2_g792 = temp_output_6_0_g792;
+				float r2_g792 = _DiffuseRoughness;
+				float3 WorldView2_g792 = WorldViewDirection;
+				float2 texCoord7_g792 = IN.ase_texcoord8.zw * float2( 1,1 ) + float2( 0,0 );
+				float2 lightmapUV2_g792 = texCoord7_g792;
+				float2 texCoord9_g792 = IN.ase_texcoord9.xy * float2( 1,1 ) + float2( 0,0 );
+				float3 bakedGI8_g792 = ASEBakedGI( temp_output_6_0_g792, texCoord7_g792, true);
+				float3 GI2_g792 = bakedGI8_g792;
 				float LightClamp579 = _LightClamp;
-				float LightClamp2_g808 = LightClamp579;
-				float3 localLightingFull2_g808 = LightingFull2_g808( WorldPos2_g808 , Normal2_g808 , r2_g808 , WorldView2_g808 , lightmapUV2_g808 , GI2_g808 , LightClamp2_g808 );
+				float LightClamp2_g792 = LightClamp579;
+				float3 localLightingFull2_g792 = LightingFull2_g792( WorldPos2_g792 , Normal2_g792 , r2_g792 , WorldView2_g792 , lightmapUV2_g792 , GI2_g792 , LightClamp2_g792 );
 				float Diffuse_boost168 = _Diffuseboost;
-				float2 texCoord57 = IN.ase_texcoord8.zw * float2( 1,1 ) + float2( 0,0 );
-				float2 texCoord58 = IN.ase_texcoord9.xy * float2( 1,1 ) + float2( 0,0 );
-				float3 bakedGI441 = ASEBakedGI( WorldNormal, texCoord57, true);
-				float GI128 = _GI;
-				float3 temp_output_446_0 = ( ( localLightingFull2_g808 * Diffuse_boost168 ) + ( bakedGI441 * GI128 ) );
-				float4 temp_cast_2 = (( _SSS_DebugMode == 4.0 ? 0.0 : 1.0 )).xxxx;
+				float4 temp_cast_6 = (1.0).xxxx;
+				float2 texCoord15_g820 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g823 = ( texCoord15_g820 * _Tiling );
+				float2 temp_cast_7 = (0.5).xx;
+				float2 temp_output_12_0_g824 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g823 - temp_cast_7 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g823 ));
+				float Depth17_g824 = _Depth;
+				float3 viewDir17_g824 = ase_tanViewDir;
+				float2 uv17_g824 = temp_output_12_0_g824;
+				SamplerState ss17_g824 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g824 = MyCustomExpression17_g824( Depth17_g824 , viewDir17_g824 , uv17_g824 , ss17_g824 );
+				float2 temp_output_4_0_g821 = (( _EnableParallax )?( localMyCustomExpression17_g824 ):( temp_output_12_0_g824 ));
+				float2 inUV8_g821 = temp_output_4_0_g821;
+				float2 temp_output_7_0_g822 = ( ( temp_output_4_0_g821 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g822 = dot( temp_output_7_0_g822 , temp_output_7_0_g822 );
+				float ScaleMask8_g821 = ( 1.0 - pow( saturate( dotResult2_g822 ) , 0.15 ) );
+				float Dilation8_g821 = _Dilation;
+				float2 localDilationnotexture8_g821 = Dilationnotexture8_g821( inUV8_g821 , ScaleMask8_g821 , Dilation8_g821 );
+				float4 tex2DNode3_g819 = SAMPLE_TEXTURE2D( _OcclusionMap, sampler_OcclusionMap, ( 1.0 == _EyeDilation ? localDilationnotexture8_g821 : temp_output_4_0_g821 ) );
+				float4 lerpResult26_g819 = lerp( _OcclusionColor , temp_cast_6 , tex2DNode3_g819.r);
+				float4 lerpResult1_g819 = lerp( float4( 1,1,1,0 ) , lerpResult26_g819 , _Occlusionlightpass);
+				float4 temp_output_597_0 = lerpResult1_g819;
+				float2 texCoord15_g813 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g816 = ( texCoord15_g813 * _Tiling );
+				float2 temp_cast_10 = (0.5).xx;
+				float2 temp_output_12_0_g817 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g816 - temp_cast_10 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g816 ));
+				float Depth17_g817 = _Depth;
+				float3 viewDir17_g817 = ase_tanViewDir;
+				float2 uv17_g817 = temp_output_12_0_g817;
+				SamplerState ss17_g817 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g817 = MyCustomExpression17_g817( Depth17_g817 , viewDir17_g817 , uv17_g817 , ss17_g817 );
+				float2 temp_output_4_0_g814 = (( _EnableParallax )?( localMyCustomExpression17_g817 ):( temp_output_12_0_g817 ));
+				float2 inUV8_g814 = temp_output_4_0_g814;
+				float2 temp_output_7_0_g815 = ( ( temp_output_4_0_g814 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g815 = dot( temp_output_7_0_g815 , temp_output_7_0_g815 );
+				float ScaleMask8_g814 = ( 1.0 - pow( saturate( dotResult2_g815 ) , 0.15 ) );
+				float Dilation8_g814 = _Dilation;
+				float2 localDilationnotexture8_g814 = Dilationnotexture8_g814( inUV8_g814 , ScaleMask8_g814 , Dilation8_g814 );
+				float2 temp_output_62_0_g809 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g814 : temp_output_4_0_g814 );
+				float3x3 ase_worldToTangent = float3x3(WorldTangent,WorldBiTangent,WorldNormal);
+				float3 worldToTangentDir6_g809 = normalize( mul( ase_worldToTangent, SafeNormalize(_MainLightPosition.xyz)) );
+				float2 appendResult4_g809 = (float2(worldToTangentDir6_g809.x , worldToTangentDir6_g809.y));
+				float Iris_Shadow_Distance196 = _IrisShadowDistance;
+				float2 temp_output_2_0_g809 = ( temp_output_62_0_g809 + ( appendResult4_g809 * Iris_Shadow_Distance196 ) );
+				float2 temp_output_7_0_g812 = ( ( temp_output_2_0_g809 - float2( 0.5,0.5 ) ) / _IrisSelfShadowCircleRadius );
+				float dotResult2_g812 = dot( temp_output_7_0_g812 , temp_output_7_0_g812 );
+				float3 temp_cast_11 = (( 1.0 - pow( saturate( dotResult2_g812 ) , _IrisSelfShadowCircleHardness ) )).xxx;
+				float2 temp_output_7_0_g811 = ( ( temp_output_62_0_g809 - float2( 0.5,0.5 ) ) / _IrisSelfShadowCircleRadius );
+				float dotResult2_g811 = dot( temp_output_7_0_g811 , temp_output_7_0_g811 );
+				float3 Normal_Tangent336 = temp_output_600_0;
+				float3 tanNormal26_g809 = Normal_Tangent336;
+				float3 worldNormal26_g809 = float3(dot(tanToWorld0,tanNormal26_g809), dot(tanToWorld1,tanNormal26_g809), dot(tanToWorld2,tanNormal26_g809));
+				float dotResult27_g809 = dot( SafeNormalize(_MainLightPosition.xyz) , worldNormal26_g809 );
+				float smoothstepResult31_g809 = smoothstep( -0.31 , -0.02 , dotResult27_g809);
+				float temp_output_2_0_g810 = ( _IrisShadowOpacity * ( 1.0 - pow( saturate( dotResult2_g811 ) , _IrisSelfShadowCircleHardness ) ) * saturate( smoothstepResult31_g809 ) );
+				float temp_output_3_0_g810 = ( 1.0 - temp_output_2_0_g810 );
+				float3 appendResult7_g810 = (float3(temp_output_3_0_g810 , temp_output_3_0_g810 , temp_output_3_0_g810));
+				float IrisShadow190 = (( ( temp_cast_11 * temp_output_2_0_g810 ) + appendResult7_g810 )).x;
+				float4 temp_cast_14 = (( _SSS_DebugMode == 4.0 ? 0.0 : 1.0 )).xxxx;
 				#ifdef _DEBUG_ON
-				float4 staticSwitch586 = temp_cast_2;
+				float4 staticSwitch586 = temp_cast_14;
 				#else
 				float4 staticSwitch586 = _Color;
 				#endif
-				float4 temp_output_34_0 = ( float4( temp_output_446_0 , 0.0 ) * staticSwitch586 );
+				float4 temp_output_34_0 = ( float4( (( _IrisShadow )?( ( ( ( float4( localLightingFull2_g792 , 0.0 ) * Diffuse_boost168 * temp_output_597_0 ) + float4( 0,0,0,0 ) ) * IrisShadow190 ).rgb ):( ( ( float4( localLightingFull2_g792 , 0.0 ) * Diffuse_boost168 * temp_output_597_0 ) + float4( 0,0,0,0 ) ).rgb )) , 0.0 ) * staticSwitch586 );
 				float2 texCoord15_g882 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
-				float2 temp_output_23_0_g882 = texCoord15_g882;
-				float2 temp_output_97_0_g881 = temp_output_23_0_g882;
+				float2 temp_output_1_0_g885 = ( texCoord15_g882 * _Tiling );
+				float2 temp_cast_16 = (0.5).xx;
+				float2 temp_output_12_0_g886 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g885 - temp_cast_16 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g885 ));
+				float Depth17_g886 = _Depth;
+				float3 viewDir17_g886 = ase_tanViewDir;
+				float2 uv17_g886 = temp_output_12_0_g886;
+				SamplerState ss17_g886 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g886 = MyCustomExpression17_g886( Depth17_g886 , viewDir17_g886 , uv17_g886 , ss17_g886 );
+				float2 temp_output_4_0_g883 = (( _EnableParallax )?( localMyCustomExpression17_g886 ):( temp_output_12_0_g886 ));
+				float2 inUV8_g883 = temp_output_4_0_g883;
+				float2 temp_output_7_0_g884 = ( ( temp_output_4_0_g883 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g884 = dot( temp_output_7_0_g884 , temp_output_7_0_g884 );
+				float ScaleMask8_g883 = ( 1.0 - pow( saturate( dotResult2_g884 ) , 0.15 ) );
+				float Dilation8_g883 = _Dilation;
+				float2 localDilationnotexture8_g883 = Dilationnotexture8_g883( inUV8_g883 , ScaleMask8_g883 , Dilation8_g883 );
+				float2 temp_output_97_0_g881 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g883 : temp_output_4_0_g883 );
 				float4 Subsurface_Map124 = SAMPLE_TEXTURE2D( _SubsurfaceMap, sampler_SubsurfaceMap, temp_output_97_0_g881 );
 				float Subsurface126 = _Subsurface;
 				float4 lerpResult32 = lerp( float4( 1,1,1,0 ) , Subsurface_Map124 , Subsurface126);
@@ -754,13 +1135,13 @@ Shader "Hidden/LightPass_Modify"
 				float2 TSM_Grad3_g880 = appendResult27_g880;
 				float Transmission_Bias119 = _Transmission_Bias;
 				float2 uv_TransmissionMap = IN.ase_texcoord8.xy * _TransmissionMap_ST.xy + _TransmissionMap_ST.zw;
-				float3 temp_cast_6 = (0.0).xxx;
+				float3 temp_cast_19 = (0.0).xxx;
 				float2 texCoord8_g893 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
 				float2 temp_output_1_0_g893 = texCoord8_g893;
-				float2 temp_cast_7 = (0.5).xx;
-				float4 tex2DNode2_g888 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g893 - temp_cast_7 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g893 )) );
-				float3 temp_cast_8 = (tex2DNode2_g888.a).xxx;
-				float3 temp_output_112_4_g881 = (( _ScleraRing )?( temp_cast_8 ):( temp_cast_6 ));
+				float2 temp_cast_20 = (0.5).xx;
+				float4 tex2DNode2_g888 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g893 - temp_cast_20 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g893 )) );
+				float3 temp_cast_21 = (tex2DNode2_g888.a).xxx;
+				float3 temp_output_112_4_g881 = (( _ScleraRing )?( temp_cast_21 ):( temp_cast_19 ));
 				float4 lerpResult99_g881 = lerp( SAMPLE_TEXTURE2D( _TransmissionMap, sampler_TransmissionMap, temp_output_97_0_g881 ) , SAMPLE_TEXTURE2D( _TransmissionMap, sampler_TransmissionMap, uv_TransmissionMap ) , float4( saturate( ( temp_output_112_4_g881 * temp_output_112_4_g881 * 2.0 ) ) , 0.0 ));
 				float4 Transmission_Map121 = lerpResult99_g881;
 				float4 TransmisionBiased81 = ( Transmission_Bias119 + Transmission_Map121 );
@@ -773,13 +1154,13 @@ Shader "Hidden/LightPass_Modify"
 				float4 Transmission_Color104 = ( _TransmissionColor * SAMPLE_TEXTURE2D( _TransmissionTintMap, sampler_TransmissionTintMap, temp_output_97_0_g881 ) );
 				float4 experimental_shadow513 = ( float4( temp_output_603_11 , 0.0 ) * Transmission_Color104 );
 				
-				float3 temp_cast_13 = (0.0).xxx;
+				float3 temp_cast_26 = (0.0).xxx;
 				
 
 				float3 BaseColor = temp_cast_0;
-				float3 Normal = normalizeResult20_g832;
+				float3 Normal = (( _ScleraRing )?( lerpResult9_g833 ):( temp_output_6_0_g833 ));
 				float3 Emission = (( _Transmission )?( ( (( _EnableSubsurface )?( ( temp_output_34_0 * lerpResult32 ) ):( temp_output_34_0 )) + experimental_shadow513 ) ):( (( _EnableSubsurface )?( ( temp_output_34_0 * lerpResult32 ) ):( temp_output_34_0 )) )).rgb;
-				float3 Specular = temp_cast_13;
+				float3 Specular = temp_cast_26;
 				float Metallic = 0;
 				float Smoothness = 0.0;
 				float Occlusion = 0.0;
@@ -1096,37 +1477,36 @@ Shader "Hidden/LightPass_Modify"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -1136,15 +1516,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1472,37 +1856,36 @@ Shader "Hidden/LightPass_Modify"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -1512,15 +1895,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1785,6 +2172,7 @@ Shader "Hidden/LightPass_Modify"
 			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#define ASE_NEEDS_VERT_NORMAL
 			#pragma multi_compile_local_fragment __ _ENABLETRANSMISSIONGRADIENT_ON
+			#pragma shader_feature_local _ENABLE_DETAIL_NORMAL
 			#pragma shader_feature_local_fragment _DEBUG_ON
 			#include "Common.hlsl"
 
@@ -1796,7 +2184,7 @@ Shader "Hidden/LightPass_Modify"
 				float4 texcoord0 : TEXCOORD0;
 				float4 texcoord1 : TEXCOORD1;
 				float4 texcoord2 : TEXCOORD2;
-				
+				float4 ase_tangent : TANGENT;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -1816,42 +2204,43 @@ Shader "Hidden/LightPass_Modify"
 				float4 ase_texcoord4 : TEXCOORD4;
 				float4 ase_texcoord5 : TEXCOORD5;
 				float4 ase_texcoord6 : TEXCOORD6;
+				float4 ase_texcoord7 : TEXCOORD7;
+				float4 ase_texcoord8 : TEXCOORD8;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -1861,15 +2250,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -1920,15 +2313,57 @@ Shader "Hidden/LightPass_Modify"
 			SAMPLER(sampler_TransmissionTintMap);
 			TEXTURE2D(_TransmissionMap);
 			SAMPLER(sampler_TransmissionMap);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso8);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso4);
+			TEXTURE2D(_ScleraRingMap);
 			TEXTURE2D(_TransmissionGradient);
 			SAMPLER(sampler_Linear_Clamp);
-			TEXTURE2D(_ScleraRingMap);
-			SAMPLER(sampler_Trilinear_Repeat_Aniso4);
 
 
-			float3 LightingFull2_g808( float3 WorldPos, float3 Normal, float r, float3 WorldView, float2 lightmapUV, float3 GI, float LightClamp )
+			float2 MyCustomExpression17_g857( float Depth, float3 viewDir, float2 uv, SamplerState ss )
 			{
-				return DiffuseLightingFull(WorldPos, Normal, r, WorldView, lightmapUV, GI, LightClamp);
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g854( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
 			}
 			
 			float3 ASEBakedGI( float3 normalWS, float2 uvStaticLightmap, bool applyScaling )
@@ -1940,6 +2375,149 @@ Shader "Hidden/LightPass_Modify"
 			#else
 				return SampleSH(normalWS);
 			#endif
+			}
+			
+			float3 LightingFull2_g792( float3 WorldPos, float3 Normal, float r, float3 WorldView, float2 lightmapUV, float3 GI, float LightClamp )
+			{
+				return DiffuseLightingFull(WorldPos, Normal, r, WorldView, lightmapUV, GI, LightClamp);
+			}
+			
+			float2 MyCustomExpression17_g824( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g821( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g817( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g814( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g886( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g883( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
 			}
 			
 			float Transmission3_g880( float TravelDistance, float TravelDistancePointLights, float3 WorldPos, float3 ViewPos, out float3 experimental, float3 WorldNormal, float2 Cancel, float MaskWithNormals, TEXTURE2D(TransmissionGradient), SamplerState ssClamp, float2 TSM_Grad, float Thickness, float Intensity, float LightClamp )
@@ -1956,16 +2534,23 @@ Shader "Hidden/LightPass_Modify"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float3 ase_worldTangent = TransformObjectToWorldDir(v.ase_tangent.xyz);
+				o.ase_texcoord5.xyz = ase_worldTangent;
 				float3 ase_worldNormal = TransformObjectToWorldNormal(v.normalOS);
-				o.ase_texcoord4.xyz = ase_worldNormal;
+				o.ase_texcoord6.xyz = ase_worldNormal;
+				float ase_vertexTangentSign = v.ase_tangent.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
+				float3 ase_worldBitangent = cross( ase_worldNormal, ase_worldTangent ) * ase_vertexTangentSign;
+				o.ase_texcoord7.xyz = ase_worldBitangent;
 				
-				o.ase_texcoord5.xy = v.texcoord1.xy;
-				o.ase_texcoord5.zw = v.texcoord2.xy;
-				o.ase_texcoord6.xy = v.texcoord0.xy;
+				o.ase_texcoord4.xy = v.texcoord0.xy;
+				o.ase_texcoord4.zw = v.texcoord1.xy;
+				o.ase_texcoord8.xy = v.texcoord2.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
-				o.ase_texcoord4.w = 0;
-				o.ase_texcoord6.zw = 0;
+				o.ase_texcoord5.w = 0;
+				o.ase_texcoord6.w = 0;
+				o.ase_texcoord7.w = 0;
+				o.ase_texcoord8.zw = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
@@ -2017,7 +2602,8 @@ Shader "Hidden/LightPass_Modify"
 				float4 texcoord0 : TEXCOORD0;
 				float4 texcoord1 : TEXCOORD1;
 				float4 texcoord2 : TEXCOORD2;
-				
+				float4 ase_tangent : TANGENT;
+
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
@@ -2037,7 +2623,7 @@ Shader "Hidden/LightPass_Modify"
 				o.texcoord0 = v.texcoord0;
 				o.texcoord1 = v.texcoord1;
 				o.texcoord2 = v.texcoord2;
-				
+				o.ase_tangent = v.ase_tangent;
 				return o;
 			}
 
@@ -2079,7 +2665,7 @@ Shader "Hidden/LightPass_Modify"
 				o.texcoord0 = patch[0].texcoord0 * bary.x + patch[1].texcoord0 * bary.y + patch[2].texcoord0 * bary.z;
 				o.texcoord1 = patch[0].texcoord1 * bary.x + patch[1].texcoord1 * bary.y + patch[2].texcoord1 * bary.z;
 				o.texcoord2 = patch[0].texcoord2 * bary.x + patch[1].texcoord2 * bary.y + patch[2].texcoord2 * bary.z;
-				
+				o.ase_tangent = patch[0].ase_tangent * bary.x + patch[1].ase_tangent * bary.y + patch[2].ase_tangent * bary.z;
 				#if defined(ASE_PHONG_TESSELLATION)
 				float3 pp[3];
 				for (int i = 0; i < 3; ++i)
@@ -2118,35 +2704,147 @@ Shader "Hidden/LightPass_Modify"
 
 				float3 temp_cast_0 = (0.0).xxx;
 				
-				float3 WorldPos2_g808 = WorldPosition;
-				float3 ase_worldNormal = IN.ase_texcoord4.xyz;
-				float3 temp_output_6_0_g808 = ase_worldNormal;
-				float3 Normal2_g808 = temp_output_6_0_g808;
-				float r2_g808 = _DiffuseRoughness;
+				float3 WorldPos2_g792 = WorldPosition;
+				float2 texCoord15_g853 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g856 = ( texCoord15_g853 * _Tiling );
+				float2 temp_cast_1 = (0.5).xx;
+				float2 temp_output_12_0_g857 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g856 - temp_cast_1 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g856 ));
+				float Depth17_g857 = _Depth;
+				float3 ase_worldTangent = IN.ase_texcoord5.xyz;
+				float3 ase_worldNormal = IN.ase_texcoord6.xyz;
+				float3 ase_worldBitangent = IN.ase_texcoord7.xyz;
+				float3 tanToWorld0 = float3( ase_worldTangent.x, ase_worldBitangent.x, ase_worldNormal.x );
+				float3 tanToWorld1 = float3( ase_worldTangent.y, ase_worldBitangent.y, ase_worldNormal.y );
+				float3 tanToWorld2 = float3( ase_worldTangent.z, ase_worldBitangent.z, ase_worldNormal.z );
 				float3 ase_worldViewDir = ( _WorldSpaceCameraPos.xyz - WorldPosition );
 				ase_worldViewDir = normalize(ase_worldViewDir);
-				float3 WorldView2_g808 = ase_worldViewDir;
-				float2 lightmapUV2_g808 = float2( 0,0 );
-				float3 GI2_g808 = float3( 0,0,0 );
+				float3 ase_tanViewDir =  tanToWorld0 * ase_worldViewDir.x + tanToWorld1 * ase_worldViewDir.y  + tanToWorld2 * ase_worldViewDir.z;
+				ase_tanViewDir = SafeNormalize( ase_tanViewDir );
+				float3 viewDir17_g857 = ase_tanViewDir;
+				float2 uv17_g857 = temp_output_12_0_g857;
+				SamplerState ss17_g857 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g857 = MyCustomExpression17_g857( Depth17_g857 , viewDir17_g857 , uv17_g857 , ss17_g857 );
+				float2 temp_output_4_0_g854 = (( _EnableParallax )?( localMyCustomExpression17_g857 ):( temp_output_12_0_g857 ));
+				float2 inUV8_g854 = temp_output_4_0_g854;
+				float2 temp_output_7_0_g855 = ( ( temp_output_4_0_g854 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g855 = dot( temp_output_7_0_g855 , temp_output_7_0_g855 );
+				float ScaleMask8_g854 = ( 1.0 - pow( saturate( dotResult2_g855 ) , 0.15 ) );
+				float Dilation8_g854 = _Dilation;
+				float2 localDilationnotexture8_g854 = Dilationnotexture8_g854( inUV8_g854 , ScaleMask8_g854 , Dilation8_g854 );
+				float2 temp_output_26_0_g846 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g854 : temp_output_4_0_g854 );
+				float3 unpack1_g846 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_Trilinear_Repeat_Aniso4, temp_output_26_0_g846 ), _NormalIntensity );
+				unpack1_g846.z = lerp( 1, unpack1_g846.z, saturate(_NormalIntensity) );
+				float3 normalizeResult20_g846 = normalize( unpack1_g846 );
+				float3 unpack8_g846 = UnpackNormalScale( SAMPLE_TEXTURE2D( _DetailNormalMap, sampler_Trilinear_Repeat_Aniso4, ( temp_output_26_0_g846 * _DetailNormalMapTile ) ), _DetailNormalIntensity );
+				unpack8_g846.z = lerp( 1, unpack8_g846.z, saturate(_DetailNormalIntensity) );
+				#ifdef _ENABLE_DETAIL_NORMAL
+				float3 staticSwitch15_g846 = BlendNormal( normalizeResult20_g846 , unpack8_g846 );
+				#else
+				float3 staticSwitch15_g846 = normalizeResult20_g846;
+				#endif
+				float3 temp_output_6_0_g847 = staticSwitch15_g846;
+				float2 texCoord8_g852 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g852 = texCoord8_g852;
+				float2 temp_cast_2 = (0.5).xx;
+				float4 tex2DNode2_g847 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g852 - temp_cast_2 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g852 )) );
+				float3 lerpResult9_g847 = lerp( temp_output_6_0_g847 , float3( 0,0,1 ) , tex2DNode2_g847.a);
+				float3 temp_output_600_0 = (( _ScleraRing )?( lerpResult9_g847 ):( temp_output_6_0_g847 ));
+				float3 tanNormal53 = temp_output_600_0;
+				float3 worldNormal53 = float3(dot(tanToWorld0,tanNormal53), dot(tanToWorld1,tanNormal53), dot(tanToWorld2,tanNormal53));
+				float3 temp_output_6_0_g792 = worldNormal53;
+				float3 Normal2_g792 = temp_output_6_0_g792;
+				float r2_g792 = _DiffuseRoughness;
+				float3 WorldView2_g792 = ase_worldViewDir;
+				float2 texCoord7_g792 = IN.ase_texcoord4.zw * float2( 1,1 ) + float2( 0,0 );
+				float2 lightmapUV2_g792 = texCoord7_g792;
+				float2 texCoord9_g792 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float3 bakedGI8_g792 = ASEBakedGI( temp_output_6_0_g792, texCoord7_g792, true);
+				float3 GI2_g792 = bakedGI8_g792;
 				float LightClamp579 = _LightClamp;
-				float LightClamp2_g808 = LightClamp579;
-				float3 localLightingFull2_g808 = LightingFull2_g808( WorldPos2_g808 , Normal2_g808 , r2_g808 , WorldView2_g808 , lightmapUV2_g808 , GI2_g808 , LightClamp2_g808 );
+				float LightClamp2_g792 = LightClamp579;
+				float3 localLightingFull2_g792 = LightingFull2_g792( WorldPos2_g792 , Normal2_g792 , r2_g792 , WorldView2_g792 , lightmapUV2_g792 , GI2_g792 , LightClamp2_g792 );
 				float Diffuse_boost168 = _Diffuseboost;
-				float2 texCoord57 = IN.ase_texcoord5.xy * float2( 1,1 ) + float2( 0,0 );
-				float2 texCoord58 = IN.ase_texcoord5.zw * float2( 1,1 ) + float2( 0,0 );
-				float3 bakedGI441 = ASEBakedGI( ase_worldNormal, texCoord57, true);
-				float GI128 = _GI;
-				float3 temp_output_446_0 = ( ( localLightingFull2_g808 * Diffuse_boost168 ) + ( bakedGI441 * GI128 ) );
-				float4 temp_cast_2 = (( _SSS_DebugMode == 4.0 ? 0.0 : 1.0 )).xxxx;
+				float4 temp_cast_4 = (1.0).xxxx;
+				float2 texCoord15_g820 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g823 = ( texCoord15_g820 * _Tiling );
+				float2 temp_cast_5 = (0.5).xx;
+				float2 temp_output_12_0_g824 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g823 - temp_cast_5 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g823 ));
+				float Depth17_g824 = _Depth;
+				float3 viewDir17_g824 = ase_tanViewDir;
+				float2 uv17_g824 = temp_output_12_0_g824;
+				SamplerState ss17_g824 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g824 = MyCustomExpression17_g824( Depth17_g824 , viewDir17_g824 , uv17_g824 , ss17_g824 );
+				float2 temp_output_4_0_g821 = (( _EnableParallax )?( localMyCustomExpression17_g824 ):( temp_output_12_0_g824 ));
+				float2 inUV8_g821 = temp_output_4_0_g821;
+				float2 temp_output_7_0_g822 = ( ( temp_output_4_0_g821 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g822 = dot( temp_output_7_0_g822 , temp_output_7_0_g822 );
+				float ScaleMask8_g821 = ( 1.0 - pow( saturate( dotResult2_g822 ) , 0.15 ) );
+				float Dilation8_g821 = _Dilation;
+				float2 localDilationnotexture8_g821 = Dilationnotexture8_g821( inUV8_g821 , ScaleMask8_g821 , Dilation8_g821 );
+				float4 tex2DNode3_g819 = SAMPLE_TEXTURE2D( _OcclusionMap, sampler_OcclusionMap, ( 1.0 == _EyeDilation ? localDilationnotexture8_g821 : temp_output_4_0_g821 ) );
+				float4 lerpResult26_g819 = lerp( _OcclusionColor , temp_cast_4 , tex2DNode3_g819.r);
+				float4 lerpResult1_g819 = lerp( float4( 1,1,1,0 ) , lerpResult26_g819 , _Occlusionlightpass);
+				float4 temp_output_597_0 = lerpResult1_g819;
+				float2 texCoord15_g813 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g816 = ( texCoord15_g813 * _Tiling );
+				float2 temp_cast_8 = (0.5).xx;
+				float2 temp_output_12_0_g817 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g816 - temp_cast_8 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g816 ));
+				float Depth17_g817 = _Depth;
+				float3 viewDir17_g817 = ase_tanViewDir;
+				float2 uv17_g817 = temp_output_12_0_g817;
+				SamplerState ss17_g817 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g817 = MyCustomExpression17_g817( Depth17_g817 , viewDir17_g817 , uv17_g817 , ss17_g817 );
+				float2 temp_output_4_0_g814 = (( _EnableParallax )?( localMyCustomExpression17_g817 ):( temp_output_12_0_g817 ));
+				float2 inUV8_g814 = temp_output_4_0_g814;
+				float2 temp_output_7_0_g815 = ( ( temp_output_4_0_g814 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g815 = dot( temp_output_7_0_g815 , temp_output_7_0_g815 );
+				float ScaleMask8_g814 = ( 1.0 - pow( saturate( dotResult2_g815 ) , 0.15 ) );
+				float Dilation8_g814 = _Dilation;
+				float2 localDilationnotexture8_g814 = Dilationnotexture8_g814( inUV8_g814 , ScaleMask8_g814 , Dilation8_g814 );
+				float2 temp_output_62_0_g809 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g814 : temp_output_4_0_g814 );
+				float3x3 ase_worldToTangent = float3x3(ase_worldTangent,ase_worldBitangent,ase_worldNormal);
+				float3 worldToTangentDir6_g809 = normalize( mul( ase_worldToTangent, SafeNormalize(_MainLightPosition.xyz)) );
+				float2 appendResult4_g809 = (float2(worldToTangentDir6_g809.x , worldToTangentDir6_g809.y));
+				float Iris_Shadow_Distance196 = _IrisShadowDistance;
+				float2 temp_output_2_0_g809 = ( temp_output_62_0_g809 + ( appendResult4_g809 * Iris_Shadow_Distance196 ) );
+				float2 temp_output_7_0_g812 = ( ( temp_output_2_0_g809 - float2( 0.5,0.5 ) ) / _IrisSelfShadowCircleRadius );
+				float dotResult2_g812 = dot( temp_output_7_0_g812 , temp_output_7_0_g812 );
+				float3 temp_cast_9 = (( 1.0 - pow( saturate( dotResult2_g812 ) , _IrisSelfShadowCircleHardness ) )).xxx;
+				float2 temp_output_7_0_g811 = ( ( temp_output_62_0_g809 - float2( 0.5,0.5 ) ) / _IrisSelfShadowCircleRadius );
+				float dotResult2_g811 = dot( temp_output_7_0_g811 , temp_output_7_0_g811 );
+				float3 Normal_Tangent336 = temp_output_600_0;
+				float3 tanNormal26_g809 = Normal_Tangent336;
+				float3 worldNormal26_g809 = float3(dot(tanToWorld0,tanNormal26_g809), dot(tanToWorld1,tanNormal26_g809), dot(tanToWorld2,tanNormal26_g809));
+				float dotResult27_g809 = dot( SafeNormalize(_MainLightPosition.xyz) , worldNormal26_g809 );
+				float smoothstepResult31_g809 = smoothstep( -0.31 , -0.02 , dotResult27_g809);
+				float temp_output_2_0_g810 = ( _IrisShadowOpacity * ( 1.0 - pow( saturate( dotResult2_g811 ) , _IrisSelfShadowCircleHardness ) ) * saturate( smoothstepResult31_g809 ) );
+				float temp_output_3_0_g810 = ( 1.0 - temp_output_2_0_g810 );
+				float3 appendResult7_g810 = (float3(temp_output_3_0_g810 , temp_output_3_0_g810 , temp_output_3_0_g810));
+				float IrisShadow190 = (( ( temp_cast_9 * temp_output_2_0_g810 ) + appendResult7_g810 )).x;
+				float4 temp_cast_12 = (( _SSS_DebugMode == 4.0 ? 0.0 : 1.0 )).xxxx;
 				#ifdef _DEBUG_ON
-				float4 staticSwitch586 = temp_cast_2;
+				float4 staticSwitch586 = temp_cast_12;
 				#else
 				float4 staticSwitch586 = _Color;
 				#endif
-				float4 temp_output_34_0 = ( float4( temp_output_446_0 , 0.0 ) * staticSwitch586 );
-				float2 texCoord15_g882 = IN.ase_texcoord6.xy * float2( 1,1 ) + float2( 0,0 );
-				float2 temp_output_23_0_g882 = texCoord15_g882;
-				float2 temp_output_97_0_g881 = temp_output_23_0_g882;
+				float4 temp_output_34_0 = ( float4( (( _IrisShadow )?( ( ( ( float4( localLightingFull2_g792 , 0.0 ) * Diffuse_boost168 * temp_output_597_0 ) + float4( 0,0,0,0 ) ) * IrisShadow190 ).rgb ):( ( ( float4( localLightingFull2_g792 , 0.0 ) * Diffuse_boost168 * temp_output_597_0 ) + float4( 0,0,0,0 ) ).rgb )) , 0.0 ) * staticSwitch586 );
+				float2 texCoord15_g882 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g885 = ( texCoord15_g882 * _Tiling );
+				float2 temp_cast_14 = (0.5).xx;
+				float2 temp_output_12_0_g886 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g885 - temp_cast_14 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g885 ));
+				float Depth17_g886 = _Depth;
+				float3 viewDir17_g886 = ase_tanViewDir;
+				float2 uv17_g886 = temp_output_12_0_g886;
+				SamplerState ss17_g886 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g886 = MyCustomExpression17_g886( Depth17_g886 , viewDir17_g886 , uv17_g886 , ss17_g886 );
+				float2 temp_output_4_0_g883 = (( _EnableParallax )?( localMyCustomExpression17_g886 ):( temp_output_12_0_g886 ));
+				float2 inUV8_g883 = temp_output_4_0_g883;
+				float2 temp_output_7_0_g884 = ( ( temp_output_4_0_g883 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g884 = dot( temp_output_7_0_g884 , temp_output_7_0_g884 );
+				float ScaleMask8_g883 = ( 1.0 - pow( saturate( dotResult2_g884 ) , 0.15 ) );
+				float Dilation8_g883 = _Dilation;
+				float2 localDilationnotexture8_g883 = Dilationnotexture8_g883( inUV8_g883 , ScaleMask8_g883 , Dilation8_g883 );
+				float2 temp_output_97_0_g881 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g883 : temp_output_4_0_g883 );
 				float4 Subsurface_Map124 = SAMPLE_TEXTURE2D( _SubsurfaceMap, sampler_SubsurfaceMap, temp_output_97_0_g881 );
 				float Subsurface126 = _Subsurface;
 				float4 lerpResult32 = lerp( float4( 1,1,1,0 ) , Subsurface_Map124 , Subsurface126);
@@ -2170,14 +2868,14 @@ Shader "Hidden/LightPass_Modify"
 				float2 appendResult27_g880 = (float2(_GradientMin , _GradientMax));
 				float2 TSM_Grad3_g880 = appendResult27_g880;
 				float Transmission_Bias119 = _Transmission_Bias;
-				float2 uv_TransmissionMap = IN.ase_texcoord6.xy * _TransmissionMap_ST.xy + _TransmissionMap_ST.zw;
-				float3 temp_cast_6 = (0.0).xxx;
-				float2 texCoord8_g893 = IN.ase_texcoord6.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 uv_TransmissionMap = IN.ase_texcoord4.xy * _TransmissionMap_ST.xy + _TransmissionMap_ST.zw;
+				float3 temp_cast_17 = (0.0).xxx;
+				float2 texCoord8_g893 = IN.ase_texcoord4.xy * float2( 1,1 ) + float2( 0,0 );
 				float2 temp_output_1_0_g893 = texCoord8_g893;
-				float2 temp_cast_7 = (0.5).xx;
-				float4 tex2DNode2_g888 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g893 - temp_cast_7 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g893 )) );
-				float3 temp_cast_8 = (tex2DNode2_g888.a).xxx;
-				float3 temp_output_112_4_g881 = (( _ScleraRing )?( temp_cast_8 ):( temp_cast_6 ));
+				float2 temp_cast_18 = (0.5).xx;
+				float4 tex2DNode2_g888 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g893 - temp_cast_18 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g893 )) );
+				float3 temp_cast_19 = (tex2DNode2_g888.a).xxx;
+				float3 temp_output_112_4_g881 = (( _ScleraRing )?( temp_cast_19 ):( temp_cast_17 ));
 				float4 lerpResult99_g881 = lerp( SAMPLE_TEXTURE2D( _TransmissionMap, sampler_TransmissionMap, temp_output_97_0_g881 ) , SAMPLE_TEXTURE2D( _TransmissionMap, sampler_TransmissionMap, uv_TransmissionMap ) , float4( saturate( ( temp_output_112_4_g881 * temp_output_112_4_g881 * 2.0 ) ) , 0.0 ));
 				float4 Transmission_Map121 = lerpResult99_g881;
 				float4 TransmisionBiased81 = ( Transmission_Bias119 + Transmission_Map121 );
@@ -2278,37 +2976,36 @@ Shader "Hidden/LightPass_Modify"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -2318,15 +3015,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2581,7 +3282,13 @@ Shader "Hidden/LightPass_Modify"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
             #endif
 
+			#define ASE_NEEDS_FRAG_WORLD_TANGENT
+			#define ASE_NEEDS_FRAG_WORLD_NORMAL
+			#define ASE_NEEDS_VERT_NORMAL
+			#define ASE_NEEDS_VERT_TANGENT
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma multi_compile_local_fragment __ _ENABLETRANSMISSIONGRADIENT_ON
+			#pragma shader_feature_local _ENABLE_DETAIL_NORMAL
 			#include "Common.hlsl"
 
 
@@ -2615,42 +3322,42 @@ Shader "Hidden/LightPass_Modify"
 					float4 shadowCoord : TEXCOORD4;
 				#endif
 				float4 ase_texcoord5 : TEXCOORD5;
+				float4 ase_texcoord6 : TEXCOORD6;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -2660,15 +3367,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -2719,9 +3430,58 @@ Shader "Hidden/LightPass_Modify"
 			SAMPLER(sampler_TransmissionTintMap);
 			TEXTURE2D(_TransmissionMap);
 			SAMPLER(sampler_TransmissionMap);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso8);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso4);
+			TEXTURE2D(_ScleraRingMap);
 
 
+			float2 MyCustomExpression17_g843( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
 			
+			float2 Dilationnotexture8_g840( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+
 			VertexOutput VertexFunction( VertexInput v  )
 			{
 				VertexOutput o = (VertexOutput)0;
@@ -2729,10 +3489,17 @@ Shader "Hidden/LightPass_Modify"
 				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
+				float3 ase_worldNormal = TransformObjectToWorldNormal(v.normalOS);
+				float3 ase_worldTangent = TransformObjectToWorldDir(v.tangentOS.xyz);
+				float ase_vertexTangentSign = v.tangentOS.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
+				float3 ase_worldBitangent = cross( ase_worldNormal, ase_worldTangent ) * ase_vertexTangentSign;
+				o.ase_texcoord6.xyz = ase_worldBitangent;
+				
 				o.ase_texcoord5.xy = v.ase_texcoord.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				o.ase_texcoord5.zw = 0;
+				o.ase_texcoord6.w = 0;
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 					float3 defaultVertexValue = v.positionOS.xyz;
 				#else
@@ -2886,13 +3653,50 @@ Shader "Hidden/LightPass_Modify"
 					#endif
 				#endif
 
-				float2 uv_BumpMap1_g832 = IN.ase_texcoord5.xy;
-				float3 unpack1_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_BumpMap, uv_BumpMap1_g832 ), _NormalIntensity );
+				float2 texCoord15_g839 = IN.ase_texcoord5.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g842 = ( texCoord15_g839 * _Tiling );
+				float2 temp_cast_0 = (0.5).xx;
+				float2 temp_output_12_0_g843 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g842 - temp_cast_0 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g842 ));
+				float Depth17_g843 = _Depth;
+				float3 ase_worldBitangent = IN.ase_texcoord6.xyz;
+				float3 tanToWorld0 = float3( WorldTangent.xyz.x, ase_worldBitangent.x, WorldNormal.x );
+				float3 tanToWorld1 = float3( WorldTangent.xyz.y, ase_worldBitangent.y, WorldNormal.y );
+				float3 tanToWorld2 = float3( WorldTangent.xyz.z, ase_worldBitangent.z, WorldNormal.z );
+				float3 ase_worldViewDir = ( _WorldSpaceCameraPos.xyz - WorldPosition );
+				ase_worldViewDir = normalize(ase_worldViewDir);
+				float3 ase_tanViewDir =  tanToWorld0 * ase_worldViewDir.x + tanToWorld1 * ase_worldViewDir.y  + tanToWorld2 * ase_worldViewDir.z;
+				ase_tanViewDir = SafeNormalize( ase_tanViewDir );
+				float3 viewDir17_g843 = ase_tanViewDir;
+				float2 uv17_g843 = temp_output_12_0_g843;
+				SamplerState ss17_g843 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g843 = MyCustomExpression17_g843( Depth17_g843 , viewDir17_g843 , uv17_g843 , ss17_g843 );
+				float2 temp_output_4_0_g840 = (( _EnableParallax )?( localMyCustomExpression17_g843 ):( temp_output_12_0_g843 ));
+				float2 inUV8_g840 = temp_output_4_0_g840;
+				float2 temp_output_7_0_g841 = ( ( temp_output_4_0_g840 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g841 = dot( temp_output_7_0_g841 , temp_output_7_0_g841 );
+				float ScaleMask8_g840 = ( 1.0 - pow( saturate( dotResult2_g841 ) , 0.15 ) );
+				float Dilation8_g840 = _Dilation;
+				float2 localDilationnotexture8_g840 = Dilationnotexture8_g840( inUV8_g840 , ScaleMask8_g840 , Dilation8_g840 );
+				float2 temp_output_26_0_g832 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g840 : temp_output_4_0_g840 );
+				float3 unpack1_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_Trilinear_Repeat_Aniso4, temp_output_26_0_g832 ), _NormalIntensity );
 				unpack1_g832.z = lerp( 1, unpack1_g832.z, saturate(_NormalIntensity) );
 				float3 normalizeResult20_g832 = normalize( unpack1_g832 );
+				float3 unpack8_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _DetailNormalMap, sampler_Trilinear_Repeat_Aniso4, ( temp_output_26_0_g832 * _DetailNormalMapTile ) ), _DetailNormalIntensity );
+				unpack8_g832.z = lerp( 1, unpack8_g832.z, saturate(_DetailNormalIntensity) );
+				#ifdef _ENABLE_DETAIL_NORMAL
+				float3 staticSwitch15_g832 = BlendNormal( normalizeResult20_g832 , unpack8_g832 );
+				#else
+				float3 staticSwitch15_g832 = normalizeResult20_g832;
+				#endif
+				float3 temp_output_6_0_g833 = staticSwitch15_g832;
+				float2 texCoord8_g838 = IN.ase_texcoord5.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g838 = texCoord8_g838;
+				float2 temp_cast_1 = (0.5).xx;
+				float4 tex2DNode2_g833 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g838 - temp_cast_1 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g838 )) );
+				float3 lerpResult9_g833 = lerp( temp_output_6_0_g833 , float3( 0,0,1 ) , tex2DNode2_g833.a);
 				
 
-				float3 Normal = normalizeResult20_g832;
+				float3 Normal = (( _ScleraRing )?( lerpResult9_g833 ):( temp_output_6_0_g833 ));
 				float Alpha = 1;
 				float AlphaClipThreshold = 0.5;
 				#ifdef ASE_DEPTH_WRITE_ON
@@ -3017,10 +3821,13 @@ Shader "Hidden/LightPass_Modify"
 				#define ENABLE_TERRAIN_PERPIXEL_NORMAL
 			#endif
 
-			#define ASE_NEEDS_FRAG_WORLD_POSITION
+			#define ASE_NEEDS_FRAG_WORLD_TANGENT
 			#define ASE_NEEDS_FRAG_WORLD_NORMAL
+			#define ASE_NEEDS_FRAG_WORLD_BITANGENT
 			#define ASE_NEEDS_FRAG_WORLD_VIEW_DIR
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma multi_compile_local_fragment __ _ENABLETRANSMISSIONGRADIENT_ON
+			#pragma shader_feature_local _ENABLE_DETAIL_NORMAL
 			#pragma shader_feature_local_fragment _DEBUG_ON
 			#include "Common.hlsl"
 
@@ -3067,37 +3874,36 @@ Shader "Hidden/LightPass_Modify"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -3107,15 +3913,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3166,17 +3976,105 @@ Shader "Hidden/LightPass_Modify"
 			SAMPLER(sampler_TransmissionTintMap);
 			TEXTURE2D(_TransmissionMap);
 			SAMPLER(sampler_TransmissionMap);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso8);
+			SAMPLER(sampler_Trilinear_Repeat_Aniso4);
+			TEXTURE2D(_ScleraRingMap);
 			TEXTURE2D(_TransmissionGradient);
 			SAMPLER(sampler_Linear_Clamp);
-			TEXTURE2D(_ScleraRingMap);
-			SAMPLER(sampler_Trilinear_Repeat_Aniso4);
 
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/UnityGBuffer.hlsl"
 
-			float3 LightingFull2_g808( float3 WorldPos, float3 Normal, float r, float3 WorldView, float2 lightmapUV, float3 GI, float LightClamp )
+			float2 MyCustomExpression17_g843( float Depth, float3 viewDir, float2 uv, SamplerState ss )
 			{
-				return DiffuseLightingFull(WorldPos, Normal, r, WorldView, lightmapUV, GI, LightClamp);
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g840( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g857( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g854( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
 			}
 			
 			float3 ASEBakedGI( float3 normalWS, float2 uvStaticLightmap, bool applyScaling )
@@ -3188,6 +4086,149 @@ Shader "Hidden/LightPass_Modify"
 			#else
 				return SampleSH(normalWS);
 			#endif
+			}
+			
+			float3 LightingFull2_g792( float3 WorldPos, float3 Normal, float r, float3 WorldView, float2 lightmapUV, float3 GI, float LightClamp )
+			{
+				return DiffuseLightingFull(WorldPos, Normal, r, WorldView, lightmapUV, GI, LightClamp);
+			}
+			
+			float2 MyCustomExpression17_g824( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g821( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g817( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g814( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
+			}
+			
+			float2 MyCustomExpression17_g886( float Depth, float3 viewDir, float2 uv, SamplerState ss )
+			{
+				float2  finalUV = 0;
+				float3 dir = viewDir;
+				    float2 maxOffset = dir.xy * (- Depth / (abs(dir.z) + 0.001));
+					
+				     float minSamples = 16.0;
+				    float maxSamples = 128.0;
+				    float samples = saturate(3.0 * length(maxOffset));
+				    float incr = rcp(lerp(minSamples, maxSamples, samples));
+				    half2 tc0 = uv;
+				// float h0 = 1 - tex2Dlod(_BaseMap, float4(tc0, 0, 0)).a;
+				 float h0 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc0, 0).a;
+				for (float i = incr; i <= 1.0; i += incr)
+				    {
+				        half2 tc = tc0 + maxOffset * i;
+				//float h1 = 1 - tex2Dlod(_BaseMap, float4(tc, 0, 0)).a;
+				 float h1 = 1 - SAMPLE_TEXTURE2D_LOD( _BaseMap, ss, tc, 0).a;
+				if (i >= h1)
+				        {
+							//hit! now interpolate
+				            float r1 = i, r0 = i - incr;
+				            float t = (h0 - r0) / ((h0 - r0) + (-h1 + r1));
+				            float r = (r0 - t * r0) + t * r1;
+				            finalUV = tc0 + r * maxOffset;
+				            break;
+				        }
+				else
+				        {
+				            finalUV = tc0 + maxOffset;
+				        }
+				        h0 = h1;
+				}
+				return finalUV;
+			}
+			
+			float2 Dilationnotexture8_g883( float2 inUV, float ScaleMask, float Dilation )
+			{
+				float2 outUV = inUV;
+				outUV -= 0.5;
+				float pupilRange = 1.0 - ScaleMask;
+				outUV.xy *= saturate(lerp(1.0f, pupilRange, Dilation));
+				outUV.xy += 0.5f;
+				return outUV;
 			}
 			
 			float Transmission3_g880( float TravelDistance, float TravelDistancePointLights, float3 WorldPos, float3 ViewPos, out float3 experimental, float3 WorldNormal, float2 Cancel, float MaskWithNormals, TEXTURE2D(TransmissionGradient), SamplerState ssClamp, float2 TSM_Grad, float Thickness, float Intensity, float LightClamp )
@@ -3400,37 +4441,176 @@ Shader "Hidden/LightPass_Modify"
 
 				float3 temp_cast_0 = (0.0).xxx;
 				
-				float2 uv_BumpMap1_g832 = IN.ase_texcoord8.xy;
-				float3 unpack1_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_BumpMap, uv_BumpMap1_g832 ), _NormalIntensity );
+				float2 texCoord15_g839 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g842 = ( texCoord15_g839 * _Tiling );
+				float2 temp_cast_1 = (0.5).xx;
+				float2 temp_output_12_0_g843 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g842 - temp_cast_1 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g842 ));
+				float Depth17_g843 = _Depth;
+				float3 tanToWorld0 = float3( WorldTangent.x, WorldBiTangent.x, WorldNormal.x );
+				float3 tanToWorld1 = float3( WorldTangent.y, WorldBiTangent.y, WorldNormal.y );
+				float3 tanToWorld2 = float3( WorldTangent.z, WorldBiTangent.z, WorldNormal.z );
+				float3 ase_tanViewDir =  tanToWorld0 * WorldViewDirection.x + tanToWorld1 * WorldViewDirection.y  + tanToWorld2 * WorldViewDirection.z;
+				ase_tanViewDir = SafeNormalize( ase_tanViewDir );
+				float3 viewDir17_g843 = ase_tanViewDir;
+				float2 uv17_g843 = temp_output_12_0_g843;
+				SamplerState ss17_g843 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g843 = MyCustomExpression17_g843( Depth17_g843 , viewDir17_g843 , uv17_g843 , ss17_g843 );
+				float2 temp_output_4_0_g840 = (( _EnableParallax )?( localMyCustomExpression17_g843 ):( temp_output_12_0_g843 ));
+				float2 inUV8_g840 = temp_output_4_0_g840;
+				float2 temp_output_7_0_g841 = ( ( temp_output_4_0_g840 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g841 = dot( temp_output_7_0_g841 , temp_output_7_0_g841 );
+				float ScaleMask8_g840 = ( 1.0 - pow( saturate( dotResult2_g841 ) , 0.15 ) );
+				float Dilation8_g840 = _Dilation;
+				float2 localDilationnotexture8_g840 = Dilationnotexture8_g840( inUV8_g840 , ScaleMask8_g840 , Dilation8_g840 );
+				float2 temp_output_26_0_g832 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g840 : temp_output_4_0_g840 );
+				float3 unpack1_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_Trilinear_Repeat_Aniso4, temp_output_26_0_g832 ), _NormalIntensity );
 				unpack1_g832.z = lerp( 1, unpack1_g832.z, saturate(_NormalIntensity) );
 				float3 normalizeResult20_g832 = normalize( unpack1_g832 );
+				float3 unpack8_g832 = UnpackNormalScale( SAMPLE_TEXTURE2D( _DetailNormalMap, sampler_Trilinear_Repeat_Aniso4, ( temp_output_26_0_g832 * _DetailNormalMapTile ) ), _DetailNormalIntensity );
+				unpack8_g832.z = lerp( 1, unpack8_g832.z, saturate(_DetailNormalIntensity) );
+				#ifdef _ENABLE_DETAIL_NORMAL
+				float3 staticSwitch15_g832 = BlendNormal( normalizeResult20_g832 , unpack8_g832 );
+				#else
+				float3 staticSwitch15_g832 = normalizeResult20_g832;
+				#endif
+				float3 temp_output_6_0_g833 = staticSwitch15_g832;
+				float2 texCoord8_g838 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g838 = texCoord8_g838;
+				float2 temp_cast_2 = (0.5).xx;
+				float4 tex2DNode2_g833 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g838 - temp_cast_2 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g838 )) );
+				float3 lerpResult9_g833 = lerp( temp_output_6_0_g833 , float3( 0,0,1 ) , tex2DNode2_g833.a);
 				
-				float3 WorldPos2_g808 = WorldPosition;
-				float3 temp_output_6_0_g808 = WorldNormal;
-				float3 Normal2_g808 = temp_output_6_0_g808;
-				float r2_g808 = _DiffuseRoughness;
-				float3 WorldView2_g808 = WorldViewDirection;
-				float2 lightmapUV2_g808 = float2( 0,0 );
-				float3 GI2_g808 = float3( 0,0,0 );
+				float3 WorldPos2_g792 = WorldPosition;
+				float2 texCoord15_g853 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g856 = ( texCoord15_g853 * _Tiling );
+				float2 temp_cast_3 = (0.5).xx;
+				float2 temp_output_12_0_g857 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g856 - temp_cast_3 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g856 ));
+				float Depth17_g857 = _Depth;
+				float3 viewDir17_g857 = ase_tanViewDir;
+				float2 uv17_g857 = temp_output_12_0_g857;
+				SamplerState ss17_g857 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g857 = MyCustomExpression17_g857( Depth17_g857 , viewDir17_g857 , uv17_g857 , ss17_g857 );
+				float2 temp_output_4_0_g854 = (( _EnableParallax )?( localMyCustomExpression17_g857 ):( temp_output_12_0_g857 ));
+				float2 inUV8_g854 = temp_output_4_0_g854;
+				float2 temp_output_7_0_g855 = ( ( temp_output_4_0_g854 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g855 = dot( temp_output_7_0_g855 , temp_output_7_0_g855 );
+				float ScaleMask8_g854 = ( 1.0 - pow( saturate( dotResult2_g855 ) , 0.15 ) );
+				float Dilation8_g854 = _Dilation;
+				float2 localDilationnotexture8_g854 = Dilationnotexture8_g854( inUV8_g854 , ScaleMask8_g854 , Dilation8_g854 );
+				float2 temp_output_26_0_g846 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g854 : temp_output_4_0_g854 );
+				float3 unpack1_g846 = UnpackNormalScale( SAMPLE_TEXTURE2D( _BumpMap, sampler_Trilinear_Repeat_Aniso4, temp_output_26_0_g846 ), _NormalIntensity );
+				unpack1_g846.z = lerp( 1, unpack1_g846.z, saturate(_NormalIntensity) );
+				float3 normalizeResult20_g846 = normalize( unpack1_g846 );
+				float3 unpack8_g846 = UnpackNormalScale( SAMPLE_TEXTURE2D( _DetailNormalMap, sampler_Trilinear_Repeat_Aniso4, ( temp_output_26_0_g846 * _DetailNormalMapTile ) ), _DetailNormalIntensity );
+				unpack8_g846.z = lerp( 1, unpack8_g846.z, saturate(_DetailNormalIntensity) );
+				#ifdef _ENABLE_DETAIL_NORMAL
+				float3 staticSwitch15_g846 = BlendNormal( normalizeResult20_g846 , unpack8_g846 );
+				#else
+				float3 staticSwitch15_g846 = normalizeResult20_g846;
+				#endif
+				float3 temp_output_6_0_g847 = staticSwitch15_g846;
+				float2 texCoord8_g852 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g852 = texCoord8_g852;
+				float2 temp_cast_4 = (0.5).xx;
+				float4 tex2DNode2_g847 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g852 - temp_cast_4 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g852 )) );
+				float3 lerpResult9_g847 = lerp( temp_output_6_0_g847 , float3( 0,0,1 ) , tex2DNode2_g847.a);
+				float3 temp_output_600_0 = (( _ScleraRing )?( lerpResult9_g847 ):( temp_output_6_0_g847 ));
+				float3 tanNormal53 = temp_output_600_0;
+				float3 worldNormal53 = float3(dot(tanToWorld0,tanNormal53), dot(tanToWorld1,tanNormal53), dot(tanToWorld2,tanNormal53));
+				float3 temp_output_6_0_g792 = worldNormal53;
+				float3 Normal2_g792 = temp_output_6_0_g792;
+				float r2_g792 = _DiffuseRoughness;
+				float3 WorldView2_g792 = WorldViewDirection;
+				float2 texCoord7_g792 = IN.ase_texcoord8.zw * float2( 1,1 ) + float2( 0,0 );
+				float2 lightmapUV2_g792 = texCoord7_g792;
+				float2 texCoord9_g792 = IN.ase_texcoord9.xy * float2( 1,1 ) + float2( 0,0 );
+				float3 bakedGI8_g792 = ASEBakedGI( temp_output_6_0_g792, texCoord7_g792, true);
+				float3 GI2_g792 = bakedGI8_g792;
 				float LightClamp579 = _LightClamp;
-				float LightClamp2_g808 = LightClamp579;
-				float3 localLightingFull2_g808 = LightingFull2_g808( WorldPos2_g808 , Normal2_g808 , r2_g808 , WorldView2_g808 , lightmapUV2_g808 , GI2_g808 , LightClamp2_g808 );
+				float LightClamp2_g792 = LightClamp579;
+				float3 localLightingFull2_g792 = LightingFull2_g792( WorldPos2_g792 , Normal2_g792 , r2_g792 , WorldView2_g792 , lightmapUV2_g792 , GI2_g792 , LightClamp2_g792 );
 				float Diffuse_boost168 = _Diffuseboost;
-				float2 texCoord57 = IN.ase_texcoord8.zw * float2( 1,1 ) + float2( 0,0 );
-				float2 texCoord58 = IN.ase_texcoord9.xy * float2( 1,1 ) + float2( 0,0 );
-				float3 bakedGI441 = ASEBakedGI( WorldNormal, texCoord57, true);
-				float GI128 = _GI;
-				float3 temp_output_446_0 = ( ( localLightingFull2_g808 * Diffuse_boost168 ) + ( bakedGI441 * GI128 ) );
-				float4 temp_cast_2 = (( _SSS_DebugMode == 4.0 ? 0.0 : 1.0 )).xxxx;
+				float4 temp_cast_6 = (1.0).xxxx;
+				float2 texCoord15_g820 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g823 = ( texCoord15_g820 * _Tiling );
+				float2 temp_cast_7 = (0.5).xx;
+				float2 temp_output_12_0_g824 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g823 - temp_cast_7 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g823 ));
+				float Depth17_g824 = _Depth;
+				float3 viewDir17_g824 = ase_tanViewDir;
+				float2 uv17_g824 = temp_output_12_0_g824;
+				SamplerState ss17_g824 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g824 = MyCustomExpression17_g824( Depth17_g824 , viewDir17_g824 , uv17_g824 , ss17_g824 );
+				float2 temp_output_4_0_g821 = (( _EnableParallax )?( localMyCustomExpression17_g824 ):( temp_output_12_0_g824 ));
+				float2 inUV8_g821 = temp_output_4_0_g821;
+				float2 temp_output_7_0_g822 = ( ( temp_output_4_0_g821 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g822 = dot( temp_output_7_0_g822 , temp_output_7_0_g822 );
+				float ScaleMask8_g821 = ( 1.0 - pow( saturate( dotResult2_g822 ) , 0.15 ) );
+				float Dilation8_g821 = _Dilation;
+				float2 localDilationnotexture8_g821 = Dilationnotexture8_g821( inUV8_g821 , ScaleMask8_g821 , Dilation8_g821 );
+				float4 tex2DNode3_g819 = SAMPLE_TEXTURE2D( _OcclusionMap, sampler_OcclusionMap, ( 1.0 == _EyeDilation ? localDilationnotexture8_g821 : temp_output_4_0_g821 ) );
+				float4 lerpResult26_g819 = lerp( _OcclusionColor , temp_cast_6 , tex2DNode3_g819.r);
+				float4 lerpResult1_g819 = lerp( float4( 1,1,1,0 ) , lerpResult26_g819 , _Occlusionlightpass);
+				float4 temp_output_597_0 = lerpResult1_g819;
+				float2 texCoord15_g813 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
+				float2 temp_output_1_0_g816 = ( texCoord15_g813 * _Tiling );
+				float2 temp_cast_10 = (0.5).xx;
+				float2 temp_output_12_0_g817 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g816 - temp_cast_10 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g816 ));
+				float Depth17_g817 = _Depth;
+				float3 viewDir17_g817 = ase_tanViewDir;
+				float2 uv17_g817 = temp_output_12_0_g817;
+				SamplerState ss17_g817 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g817 = MyCustomExpression17_g817( Depth17_g817 , viewDir17_g817 , uv17_g817 , ss17_g817 );
+				float2 temp_output_4_0_g814 = (( _EnableParallax )?( localMyCustomExpression17_g817 ):( temp_output_12_0_g817 ));
+				float2 inUV8_g814 = temp_output_4_0_g814;
+				float2 temp_output_7_0_g815 = ( ( temp_output_4_0_g814 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g815 = dot( temp_output_7_0_g815 , temp_output_7_0_g815 );
+				float ScaleMask8_g814 = ( 1.0 - pow( saturate( dotResult2_g815 ) , 0.15 ) );
+				float Dilation8_g814 = _Dilation;
+				float2 localDilationnotexture8_g814 = Dilationnotexture8_g814( inUV8_g814 , ScaleMask8_g814 , Dilation8_g814 );
+				float2 temp_output_62_0_g809 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g814 : temp_output_4_0_g814 );
+				float3x3 ase_worldToTangent = float3x3(WorldTangent,WorldBiTangent,WorldNormal);
+				float3 worldToTangentDir6_g809 = normalize( mul( ase_worldToTangent, SafeNormalize(_MainLightPosition.xyz)) );
+				float2 appendResult4_g809 = (float2(worldToTangentDir6_g809.x , worldToTangentDir6_g809.y));
+				float Iris_Shadow_Distance196 = _IrisShadowDistance;
+				float2 temp_output_2_0_g809 = ( temp_output_62_0_g809 + ( appendResult4_g809 * Iris_Shadow_Distance196 ) );
+				float2 temp_output_7_0_g812 = ( ( temp_output_2_0_g809 - float2( 0.5,0.5 ) ) / _IrisSelfShadowCircleRadius );
+				float dotResult2_g812 = dot( temp_output_7_0_g812 , temp_output_7_0_g812 );
+				float3 temp_cast_11 = (( 1.0 - pow( saturate( dotResult2_g812 ) , _IrisSelfShadowCircleHardness ) )).xxx;
+				float2 temp_output_7_0_g811 = ( ( temp_output_62_0_g809 - float2( 0.5,0.5 ) ) / _IrisSelfShadowCircleRadius );
+				float dotResult2_g811 = dot( temp_output_7_0_g811 , temp_output_7_0_g811 );
+				float3 Normal_Tangent336 = temp_output_600_0;
+				float3 tanNormal26_g809 = Normal_Tangent336;
+				float3 worldNormal26_g809 = float3(dot(tanToWorld0,tanNormal26_g809), dot(tanToWorld1,tanNormal26_g809), dot(tanToWorld2,tanNormal26_g809));
+				float dotResult27_g809 = dot( SafeNormalize(_MainLightPosition.xyz) , worldNormal26_g809 );
+				float smoothstepResult31_g809 = smoothstep( -0.31 , -0.02 , dotResult27_g809);
+				float temp_output_2_0_g810 = ( _IrisShadowOpacity * ( 1.0 - pow( saturate( dotResult2_g811 ) , _IrisSelfShadowCircleHardness ) ) * saturate( smoothstepResult31_g809 ) );
+				float temp_output_3_0_g810 = ( 1.0 - temp_output_2_0_g810 );
+				float3 appendResult7_g810 = (float3(temp_output_3_0_g810 , temp_output_3_0_g810 , temp_output_3_0_g810));
+				float IrisShadow190 = (( ( temp_cast_11 * temp_output_2_0_g810 ) + appendResult7_g810 )).x;
+				float4 temp_cast_14 = (( _SSS_DebugMode == 4.0 ? 0.0 : 1.0 )).xxxx;
 				#ifdef _DEBUG_ON
-				float4 staticSwitch586 = temp_cast_2;
+				float4 staticSwitch586 = temp_cast_14;
 				#else
 				float4 staticSwitch586 = _Color;
 				#endif
-				float4 temp_output_34_0 = ( float4( temp_output_446_0 , 0.0 ) * staticSwitch586 );
+				float4 temp_output_34_0 = ( float4( (( _IrisShadow )?( ( ( ( float4( localLightingFull2_g792 , 0.0 ) * Diffuse_boost168 * temp_output_597_0 ) + float4( 0,0,0,0 ) ) * IrisShadow190 ).rgb ):( ( ( float4( localLightingFull2_g792 , 0.0 ) * Diffuse_boost168 * temp_output_597_0 ) + float4( 0,0,0,0 ) ).rgb )) , 0.0 ) * staticSwitch586 );
 				float2 texCoord15_g882 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
-				float2 temp_output_23_0_g882 = texCoord15_g882;
-				float2 temp_output_97_0_g881 = temp_output_23_0_g882;
+				float2 temp_output_1_0_g885 = ( texCoord15_g882 * _Tiling );
+				float2 temp_cast_16 = (0.5).xx;
+				float2 temp_output_12_0_g886 = (( _EnableUVScale )?( ( ( ( temp_output_1_0_g885 - temp_cast_16 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g885 ));
+				float Depth17_g886 = _Depth;
+				float3 viewDir17_g886 = ase_tanViewDir;
+				float2 uv17_g886 = temp_output_12_0_g886;
+				SamplerState ss17_g886 = sampler_Trilinear_Repeat_Aniso8;
+				float2 localMyCustomExpression17_g886 = MyCustomExpression17_g886( Depth17_g886 , viewDir17_g886 , uv17_g886 , ss17_g886 );
+				float2 temp_output_4_0_g883 = (( _EnableParallax )?( localMyCustomExpression17_g886 ):( temp_output_12_0_g886 ));
+				float2 inUV8_g883 = temp_output_4_0_g883;
+				float2 temp_output_7_0_g884 = ( ( temp_output_4_0_g883 - float2( 0.5,0.5 ) ) / _DilationMaskRadius );
+				float dotResult2_g884 = dot( temp_output_7_0_g884 , temp_output_7_0_g884 );
+				float ScaleMask8_g883 = ( 1.0 - pow( saturate( dotResult2_g884 ) , 0.15 ) );
+				float Dilation8_g883 = _Dilation;
+				float2 localDilationnotexture8_g883 = Dilationnotexture8_g883( inUV8_g883 , ScaleMask8_g883 , Dilation8_g883 );
+				float2 temp_output_97_0_g881 = ( 1.0 == _EyeDilation ? localDilationnotexture8_g883 : temp_output_4_0_g883 );
 				float4 Subsurface_Map124 = SAMPLE_TEXTURE2D( _SubsurfaceMap, sampler_SubsurfaceMap, temp_output_97_0_g881 );
 				float Subsurface126 = _Subsurface;
 				float4 lerpResult32 = lerp( float4( 1,1,1,0 ) , Subsurface_Map124 , Subsurface126);
@@ -3455,13 +4635,13 @@ Shader "Hidden/LightPass_Modify"
 				float2 TSM_Grad3_g880 = appendResult27_g880;
 				float Transmission_Bias119 = _Transmission_Bias;
 				float2 uv_TransmissionMap = IN.ase_texcoord8.xy * _TransmissionMap_ST.xy + _TransmissionMap_ST.zw;
-				float3 temp_cast_6 = (0.0).xxx;
+				float3 temp_cast_19 = (0.0).xxx;
 				float2 texCoord8_g893 = IN.ase_texcoord8.xy * float2( 1,1 ) + float2( 0,0 );
 				float2 temp_output_1_0_g893 = texCoord8_g893;
-				float2 temp_cast_7 = (0.5).xx;
-				float4 tex2DNode2_g888 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g893 - temp_cast_7 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g893 )) );
-				float3 temp_cast_8 = (tex2DNode2_g888.a).xxx;
-				float3 temp_output_112_4_g881 = (( _ScleraRing )?( temp_cast_8 ):( temp_cast_6 ));
+				float2 temp_cast_20 = (0.5).xx;
+				float4 tex2DNode2_g888 = SAMPLE_TEXTURE2D( _ScleraRingMap, sampler_Trilinear_Repeat_Aniso4, (( _EnableUVScale )?( ( ( ( temp_output_1_0_g893 - temp_cast_20 ) * _ScaleUV ) + 0.5 ) ):( temp_output_1_0_g893 )) );
+				float3 temp_cast_21 = (tex2DNode2_g888.a).xxx;
+				float3 temp_output_112_4_g881 = (( _ScleraRing )?( temp_cast_21 ):( temp_cast_19 ));
 				float4 lerpResult99_g881 = lerp( SAMPLE_TEXTURE2D( _TransmissionMap, sampler_TransmissionMap, temp_output_97_0_g881 ) , SAMPLE_TEXTURE2D( _TransmissionMap, sampler_TransmissionMap, uv_TransmissionMap ) , float4( saturate( ( temp_output_112_4_g881 * temp_output_112_4_g881 * 2.0 ) ) , 0.0 ));
 				float4 Transmission_Map121 = lerpResult99_g881;
 				float4 TransmisionBiased81 = ( Transmission_Bias119 + Transmission_Map121 );
@@ -3474,13 +4654,13 @@ Shader "Hidden/LightPass_Modify"
 				float4 Transmission_Color104 = ( _TransmissionColor * SAMPLE_TEXTURE2D( _TransmissionTintMap, sampler_TransmissionTintMap, temp_output_97_0_g881 ) );
 				float4 experimental_shadow513 = ( float4( temp_output_603_11 , 0.0 ) * Transmission_Color104 );
 				
-				float3 temp_cast_13 = (0.0).xxx;
+				float3 temp_cast_26 = (0.0).xxx;
 				
 
 				float3 BaseColor = temp_cast_0;
-				float3 Normal = normalizeResult20_g832;
+				float3 Normal = (( _ScleraRing )?( lerpResult9_g833 ):( temp_output_6_0_g833 ));
 				float3 Emission = (( _Transmission )?( ( (( _EnableSubsurface )?( ( temp_output_34_0 * lerpResult32 ) ):( temp_output_34_0 )) + experimental_shadow513 ) ):( (( _EnableSubsurface )?( ( temp_output_34_0 * lerpResult32 ) ):( temp_output_34_0 )) )).rgb;
-				float3 Specular = temp_cast_13;
+				float3 Specular = temp_cast_26;
 				float Metallic = 0;
 				float Smoothness = 0.0;
 				float Occlusion = 0.0;
@@ -3647,37 +4827,36 @@ Shader "Hidden/LightPass_Modify"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -3687,15 +4866,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -3958,37 +5141,36 @@ Shader "Hidden/LightPass_Modify"
 			};
 
 			CBUFFER_START(UnityPerMaterial)
-			float4 _TransmissionMap_ST;
-			float4 _Color;
-			float4 _TransmissionColor;
 			float4 _ProfileColor;
-			float _DiffuseRoughness;
-			float _MaskWithNormals;
-			float _IrisShadow;
-			float _LightClamp;
-			float _GI;
+			float4 _Color;
+			float4 _OcclusionColor;
+			float4 _TransmissionColor;
+			float4 _TransmissionMap_ST;
+			float _DilationMaskRadius;
 			float _CancelMin;
 			float _CancelMax;
 			float _tsm_min;
 			float _tsm_max;
-			float _IrisShadowDistance;
+			float _TranslucencyDistanceFade;
 			float _Diffuseboost;
+			float _IrisShadowDistance;
 			float _Transmission_Bias;
 			float _Transmission_intensity;
+			float _GI;
 			float _Travel_Distance;
-			float _TravelDistancePointLights;
 			float _TravelDistanceMult;
-			float _SSS_DebugMode;
-			float _ScleraRing;
-			float _TranslucencyDistanceFade;
-			float _EnableUVScale;
-			float _Transmission;
-			float _Blur;
-			float _IrisSelfShadowCircleHardness;
-			float _IrisSelfShadowCircleRadius;
 			float _IrisShadowOpacity;
+			float _ScleraRing;
+			float _EnableParallax;
+			float _EnableUVScale;
+			float _Tiling;
+			float _ScaleUV;
+			float _IrisSelfShadowCircleRadius;
+			float _IrisSelfShadowCircleHardness;
+			float _TravelDistancePointLights;
 			float _DilationMaskHardness;
-			float _DilationMaskRadius;
+			float _LightClamp;
+			float _MaskWithNormals;
 			float _Dilation;
 			float _EyeDilation;
 			float _Depth_Center;
@@ -3998,15 +5180,19 @@ Shader "Hidden/LightPass_Modify"
 			float _Occlusionlightpass;
 			float _Cavity;
 			float _Occlusionfinalpass;
-			float _AlbedoOpacity;
+			float _IrisShadow;
 			float _DetailNormalMapTile;
-			float _DetailNormalIntensity;
 			float _NormalIntensity;
+			float _AlbedoOpacity;
 			float _GradientMax;
 			float _GradientMin;
 			float _Subsurface;
+			float _Blur;
 			float _EnableSubsurface;
-			float _ScaleUV;
+			float _Transmission;
+			float _SSS_DebugMode;
+			float _DetailNormalIntensity;
+			float _DiffuseRoughness;
 			#ifdef ASE_TRANSMISSION
 				float _TransmissionShadow;
 			#endif
@@ -4225,7 +5411,7 @@ Node;AmplifyShaderEditor.CommentaryNode;144;194.9281,2318.933;Inherit;False;745.
 Node;AmplifyShaderEditor.CommentaryNode;143;-1442.883,2495.364;Inherit;False;1319.483;451.8635;Comment;8;87;88;89;90;91;92;110;111;Normal Masking;1,1,1,1;0;0
 Node;AmplifyShaderEditor.CommentaryNode;141;-6453.277,1348.861;Inherit;False;4268.645;1157.403;Comment;16;513;557;556;532;67;118;534;533;517;114;527;516;115;562;565;581;ShadowMap;1,1,1,1;0;0
 Node;AmplifyShaderEditor.CommentaryNode;140;-378.3791,1402.406;Inherit;False;495.3759;254.8079;Comment;3;32;125;127;Subsurface;1,1,1,1;0;0
-Node;AmplifyShaderEditor.CommentaryNode;139;-2779.765,105.0475;Inherit;False;3987.701;971.2504;Comment;31;239;58;57;253;51;336;238;53;56;169;165;129;59;248;247;193;192;259;442;443;447;439;492;584;582;441;595;597;583;445;446;Diffuse;1,1,1,1;0;0
+Node;AmplifyShaderEditor.CommentaryNode;139;-2779.765,105.0475;Inherit;False;3987.701;971.2504;Comment;14;239;253;336;53;169;165;248;247;193;192;492;582;597;608;Diffuse;1,1,1,1;0;0
 Node;AmplifyShaderEditor.WorldSpaceLightDirHlpNode;88;-1375.584,2711.863;Inherit;False;False;1;0;FLOAT;0;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.NegateNode;89;-1072.859,2742.135;Inherit;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.DotProductOpNode;90;-813.3804,2621.045;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
@@ -4236,24 +5422,17 @@ Node;AmplifyShaderEditor.GetLocalVarNode;133;254.9281,2737.933;Inherit;False;132
 Node;AmplifyShaderEditor.WorldSpaceCameraPos;135;244.9281,2541.933;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.GetLocalVarNode;197;-1258.973,-251.6035;Inherit;False;196;Iris Shadow Distance;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;190;-611.2953,-409.6985;Inherit;False;IrisShadow;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.StickyNoteNode;259;-1484.083,143.6876;Inherit;False;150;100;?;;1,1,1,1;Direct light x AO? Maybe not but looks good$;0;0
 Node;AmplifyShaderEditor.GetLocalVarNode;200;-1271.598,-363.0444;Inherit;False;199;Iris Shadow Opacity;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;337;-1228.198,-456.3931;Inherit;False;336;Normal Tangent;1;0;OBJECT;;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;192;-527.8354,314.4248;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;192;-527.8354,314.4248;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.GetLocalVarNode;193;-764.077,369.9315;Inherit;False;190;IrisShadow;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleAddOpNode;247;-1049.319,319.5487;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.RelayNode;248;-832.3186,200.5487;Inherit;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.RangedFloatNode;238;-1283.606,158.4766;Inherit;False;Constant;_Float0;Float 0;26;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RegisterLocalVarNode;336;-2340.382,443.7373;Inherit;False;Normal Tangent;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.GetLocalVarNode;253;-2039.826,386.9637;Inherit;False;579;LightClamp;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.TextureCoordinatesNode;57;-2036.011,637.7642;Inherit;False;1;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.TextureCoordinatesNode;58;-2041.011,774.7644;Inherit;False;2;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RelayNode;248;-832.3186,200.5487;Inherit;False;1;0;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;34;1628.288,1255.421;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;224;1854.85,1378.167;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.RelayNode;250;2283.461,1599.365;Inherit;False;1;0;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;249;2485.035,1473.271;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;228;3194.635,1226.038;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ExtraPrePass;0;0;ExtraPrePass;5;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;0;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;0;False;False;0;;0;0;Standard;0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;229;3194.635,1226.038;Float;False;True;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;Hidden/LightPass_Modify;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForward;False;False;2;Include;;False;;Native;False;0;0;;Include;Common.hlsl;False;;Custom;False;0;0;;;0;0;Standard;40;Workflow;0;638406054578331204;Surface;0;0;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;0;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;0;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;0;0;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;0;  Use Shadow Threshold;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;DOTS Instancing;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;10;False;True;True;True;True;True;True;True;True;True;False;;True;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;229;3194.635,1226.038;Float;False;True;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;Hidden/LightPass 1;94348b07e5e8bab40bd6c8a1e3df54cd;True;Forward;0;1;Forward;21;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;True;1;1;False;;0;False;;1;1;False;;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;True;True;True;True;0;False;;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;1;LightMode=UniversalForward;False;False;2;Include;;False;;Native;False;0;0;;Include;Common.hlsl;False;;Custom;False;0;0;;;0;0;Standard;40;Workflow;0;638406054578331204;Surface;0;0;  Refraction Model;0;0;  Blend;0;0;Two Sided;1;0;Fragment Normal Space,InvertActionOnDeselection;0;0;Forward Only;0;0;Transmission;0;0;  Transmission Shadow;0.5,False,;0;Translucency;0;0;  Translucency Strength;1,False,;0;  Normal Distortion;0.5,False,;0;  Scattering;2,False,;0;  Direct;0.9,False,;0;  Ambient;0.1,False,;0;  Shadow;0.5,False,;0;Cast Shadows;1;0;  Use Shadow Threshold;0;0;GPU Instancing;1;0;LOD CrossFade;1;0;Built-in Fog;1;0;_FinalColorxAlpha;0;0;Meta Pass;1;0;Override Baked GI;0;0;Extra Pre Pass;0;0;DOTS Instancing;0;0;Tessellation;0;0;  Phong;0;0;  Strength;0.5,False,;0;  Type;0;0;  Tess;16,False,;0;  Min;10,False,;0;  Max;25,False,;0;  Edge Length;16,False,;0;  Max Displacement;25,False,;0;Write Depth;0;0;  Early Z;0;0;Vertex Position,InvertActionOnDeselection;1;0;Debug Display;0;0;Clear Coat;0;0;0;10;False;True;True;True;True;True;True;True;True;True;False;;True;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;230;2298.032,1133.61;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;231;2298.032,1133.61;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;DepthOnly;0;3;DepthOnly;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;True;True;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;False;False;True;1;LightMode=DepthOnly;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;232;2298.032,1133.61;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;Meta;0;4;Meta;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Meta;False;False;0;;0;0;Standard;0;False;0
@@ -4263,18 +5442,10 @@ Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;235;2298.032,1133.61;Float;
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;236;2298.032,1133.61;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;SceneSelectionPass;0;8;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;237;2298.032,1133.61;Float;False;False;-1;2;UnityEditor.ShaderGraphLitGUI;0;12;New Amplify Shader;94348b07e5e8bab40bd6c8a1e3df54cd;True;ScenePickingPass;0;9;ScenePickingPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;True;0;False;;False;False;False;False;False;False;False;False;False;True;False;0;False;;255;False;;255;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;0;False;;False;True;1;False;;True;3;False;;True;True;0;False;;0;False;;True;4;RenderPipeline=UniversalPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;UniversalMaterialType=Lit;True;5;True;12;all;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Picking;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.RangedFloatNode;245;2980.536,1174.911;Inherit;False;Constant;_Float1;Float 1;29;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RelayNode;239;781.665,778.5034;Inherit;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.WorldNormalVector;53;-2004.945,487.7279;Inherit;False;False;1;0;FLOAT3;0,0,1;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.WorldNormalVector;442;-899.3706,681.003;Inherit;False;False;1;0;FLOAT3;0,0,1;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.WorldPosInputsNode;51;-2037.346,237.1285;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;447;-378.4287,707.4952;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.LerpOp;439;15.4021,741.2669;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.RangedFloatNode;449;-131.8682,857.1063;Inherit;False;Constant;_Float2;Float 2;33;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.ToggleSwitchNode;317;2132.572,1313.427;Inherit;False;Property;_EnableSubsurface;_EnableSubsurface;69;0;Create;False;0;0;0;False;0;False;0;True;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.ToggleSwitchNode;270;2696.292,1414.496;Inherit;False;Property;_Transmission;_Transmission;87;0;Create;True;0;0;0;False;0;False;0;True;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.ToggleSwitchNode;270;2696.292,1414.496;Inherit;False;Property;_Transmission;_Transmission;73;0;Create;True;0;0;0;False;0;False;0;True;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.FunctionNode;492;-284.1375,202.8125;Inherit;False;Toggle IrisShadow;71;;557;afa7f85a60ebca04d9d1d2e0e9ea550e;0;2;3;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.TexturePropertyNode;208;-1712.817,-548.7149;Inherit;True;Property;_IrisShadowMap;_IrisShadowMap;90;0;Create;True;0;0;0;True;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
-Node;AmplifyShaderEditor.FunctionNode;497;318.136,636.4191;Inherit;False;Toggle ScleraRing;73;;571;27e2f89b0c601184794ffae46d74611a;0;2;3;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.TexturePropertyNode;208;-1712.817,-548.7149;Inherit;True;Property;_IrisShadowMap;_IrisShadowMap;76;0;Create;True;0;0;0;True;0;False;None;None;False;white;Auto;Texture2D;-1;0;2;SAMPLER2D;0;SAMPLERSTATE;1
 Node;AmplifyShaderEditor.GetLocalVarNode;110;-829.9456,2751.427;Inherit;False;108;Cancel Min;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;111;-826.9456,2834.427;Inherit;False;109;Cancel Max;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.WorldNormalVector;87;-1392.883,2545.364;Inherit;False;False;1;0;FLOAT3;0,0,1;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
@@ -4331,9 +5502,8 @@ Node;AmplifyShaderEditor.RegisterLocalVarNode;196;-3568,256;Inherit;False;Iris S
 Node;AmplifyShaderEditor.RegisterLocalVarNode;112;-3569,347;Inherit;False;tsm min;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;534;-6381.943,1397.716;Inherit;False;106;Transmission Intensity;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;581;-6350.071,1478.061;Inherit;False;579;LightClamp;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.GetLocalVarNode;584;-817.5099,451.0165;Inherit;False;579;LightClamp;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.ColorNode;35;455.322,1154.334;Inherit;False;Property;_Color;Color;174;0;Create;True;0;0;0;True;0;False;1,1,1,0;0,0,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.StaticSwitch;586;1012.089,1192.856;Inherit;False;Property;_Debug;Debug;112;0;Create;True;0;0;0;True;0;False;0;0;0;True;;Toggle;2;Key0;Key1;Create;True;True;Fragment;9;1;COLOR;0,0,0,0;False;0;COLOR;0,0,0,0;False;2;COLOR;0,0,0,0;False;3;COLOR;0,0,0,0;False;4;COLOR;0,0,0,0;False;5;COLOR;0,0,0,0;False;6;COLOR;0,0,0,0;False;7;COLOR;0,0,0,0;False;8;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.ColorNode;35;455.322,1154.334;Inherit;False;Property;_Color;Color;160;0;Create;True;0;0;0;True;0;False;1,1,1,0;0,0,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.StaticSwitch;586;1012.089,1192.856;Inherit;False;Property;_Debug;Debug;98;0;Create;True;0;0;0;True;0;False;0;0;0;True;;Toggle;2;Key0;Key1;Create;True;True;Fragment;9;1;COLOR;0,0,0,0;False;0;COLOR;0,0,0,0;False;2;COLOR;0,0,0,0;False;3;COLOR;0,0,0,0;False;4;COLOR;0,0,0,0;False;5;COLOR;0,0,0,0;False;6;COLOR;0,0,0,0;False;7;COLOR;0,0,0,0;False;8;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.Compare;588;789.8975,1309.878;Inherit;False;0;4;0;FLOAT;0;False;1;FLOAT;4;False;2;FLOAT;0;False;3;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.FunctionNode;589;465.8975,1332.878;Inherit;False;DebugMode;62;;793;3f30ed554b982864b9d7771a34ca3477;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;106;-3569.23,-518.16;Inherit;False;Transmission Intensity;-1;True;1;0;FLOAT;0;False;1;FLOAT;0
@@ -4349,29 +5519,25 @@ Node;AmplifyShaderEditor.GetLocalVarNode;527;-6373.569,2430.389;Inherit;False;52
 Node;AmplifyShaderEditor.GetLocalVarNode;114;-6365.302,2257.686;Inherit;False;112;tsm min;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;517;-6365.191,2143.472;Inherit;False;109;Cancel Max;1;0;OBJECT;;False;1;FLOAT;0
 Node;AmplifyShaderEditor.GetLocalVarNode;594;-6413.647,1768.378;Inherit;False;593;Travel Distance PointLights;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.BakedGINode;441;-628.6891,637.9008;Inherit;False;True;4;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.StickyNoteNode;595;-700.5703,784.0519;Inherit;False;139;115;Cookies;;1,0.05094332,0.05094332,1;GI is not being attenuatted by cookies. Unity's Lit neither;0;0
-Node;AmplifyShaderEditor.FunctionNode;596;-962.7,-421.2604;Inherit;False;FakeShadow;91;;809;3932d1024f7e418439d796f08d8f40e9;0;5;30;FLOAT3;0,0,1;False;23;FLOAT;0;False;20;SAMPLER2D;0;False;19;FLOAT;1;False;18;FLOAT;0.1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;598;-502.7002,875.577;Inherit;False;ScleraRing;75;;826;645f15d53ddd4014b823049efc7d008e;0;2;11;FLOAT3;1,0,0;False;6;FLOAT3;0,0,0;False;3;FLOAT3;0;FLOAT3;7;FLOAT3;4
-Node;AmplifyShaderEditor.FunctionNode;599;2853.668,1313.362;Inherit;False;Normals;113;;832;edf7abb8f1e0054499f2cbbdfb87b80b;0;0;1;FLOAT3;0
-Node;AmplifyShaderEditor.FunctionNode;600;-2659.784,444.9215;Inherit;False;Normals;113;;846;edf7abb8f1e0054499f2cbbdfb87b80b;0;0;1;FLOAT3;0
+Node;AmplifyShaderEditor.FunctionNode;596;-962.7,-421.2604;Inherit;False;FakeShadow;77;;809;3932d1024f7e418439d796f08d8f40e9;0;5;30;FLOAT3;0,0,1;False;23;FLOAT;0;False;20;SAMPLER2D;0;False;19;FLOAT;1;False;18;FLOAT;0.1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;599;2853.668,1313.362;Inherit;False;Normals;99;;832;edf7abb8f1e0054499f2cbbdfb87b80b;0;0;1;FLOAT3;0
+Node;AmplifyShaderEditor.FunctionNode;600;-2659.784,444.9215;Inherit;False;Normals;99;;846;edf7abb8f1e0054499f2cbbdfb87b80b;0;0;1;FLOAT3;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;104;-3562.23,-605.16;Inherit;False;Transmission Color;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.RegisterLocalVarNode;121;-3570,-55;Inherit;False;Transmission Map;-1;True;1;0;COLOR;0,0,0,0;False;1;COLOR;0
 Node;AmplifyShaderEditor.GetLocalVarNode;565;-6395.599,1563.201;Inherit;False;81;TransmisionBiased;1;0;OBJECT;;False;1;COLOR;0
 Node;AmplifyShaderEditor.GetLocalVarNode;533;-5098.077,1880.384;Inherit;False;104;Transmission Color;1;0;OBJECT;;False;1;COLOR;0
 Node;AmplifyShaderEditor.FunctionNode;603;-5839.758,1791.286;Inherit;False;TranslucentShadowMap;64;;880;45f4f7ecf74ed814b8fd79e58f762032;0;10;29;FLOAT;1;False;31;FLOAT;100;False;28;FLOAT;1;False;6;FLOAT;0.1;False;32;FLOAT;0.1;False;14;FLOAT;0;False;15;FLOAT;1;False;7;FLOAT;0;False;8;FLOAT;1;False;21;FLOAT;0;False;2;FLOAT;0;FLOAT3;11
 Node;AmplifyShaderEditor.FunctionNode;607;-4040.475,-106.7868;Inherit;False;SharedParameters;0;;881;491c93288bd7b9949815d77536da7577;0;0;25;FLOAT;124;FLOAT;119;FLOAT;120;FLOAT;114;COLOR;24;FLOAT;35;FLOAT;127;FLOAT;36;FLOAT;37;FLOAT;44;COLOR;0;FLOAT;38;FLOAT;39;FLOAT;40;FLOAT;76;FLOAT;74;FLOAT;41;FLOAT;42;FLOAT;72;FLOAT;27;COLOR;29;FLOAT;30;COLOR;32;FLOAT;33;COLOR;34
-Node;AmplifyShaderEditor.FunctionNode;582;-1689.263,248.7574;Inherit;False;DiffuseLighting;88;;792;12daf9e505d347e46b046875d4f485a5;0;2;10;FLOAT;100;False;6;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;165;-1286.892,264.5894;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.FunctionNode;597;-1583.63,685.9344;Inherit;False;Occlusion;149;;819;fda21753bf015b5409b48b776edf6d06;0;0;4;COLOR;0;COLOR;17;FLOAT;5;FLOAT;12
-Node;AmplifyShaderEditor.GetLocalVarNode;169;-1662.57,387.0404;Inherit;False;168;Diffuse boost;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.BakedGINode;56;-1781.891,514.6685;Inherit;False;True;4;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT2;0,0;False;3;FLOAT2;0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;59;-1283.026,511.7266;Inherit;False;3;3;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;2;COLOR;0,0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.GetLocalVarNode;129;-1557.187,575.9274;Inherit;False;128;GI;1;0;OBJECT;;False;1;FLOAT;0
-Node;AmplifyShaderEditor.WorldPosInputsNode;443;-982.9543,525.8075;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.FunctionNode;583;-634.1443,470.4165;Inherit;False;DiffuseLighting;88;;808;12daf9e505d347e46b046875d4f485a5;0;2;10;FLOAT;100;False;6;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;445;-373.0151,546.6956;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.SimpleAddOpNode;446;-191.4448,614.3085;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.RegisterLocalVarNode;336;-2298.781,350.9373;Inherit;False;Normal Tangent;-1;True;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.WorldNormalVector;53;-2275.345,476.5279;Inherit;False;False;1;0;FLOAT3;0,0,1;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.GetLocalVarNode;253;-2054.226,333.3637;Inherit;False;579;LightClamp;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;582;-1825.263,343.9574;Inherit;False;DiffuseLighting;74;;792;12daf9e505d347e46b046875d4f485a5;0;2;10;FLOAT;100;False;6;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.GetLocalVarNode;169;-1811.37,481.4404;Inherit;False;168;Diffuse boost;1;0;OBJECT;;False;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;597;-1596.43,582.7344;Inherit;False;Occlusion;135;;819;fda21753bf015b5409b48b776edf6d06;0;0;4;COLOR;0;COLOR;17;FLOAT;5;FLOAT;12
+Node;AmplifyShaderEditor.RelayNode;239;792.0649,556.1034;Inherit;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;165;-1322.092,297.3894;Inherit;False;3;3;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;2;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;247;-1055.719,385.9487;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;608;-1315.534,699.9907;Inherit;False;2;2;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
 WireConnection;89;0;88;0
 WireConnection;90;0;87;0
 WireConnection;90;1;89;0
@@ -4382,9 +5548,7 @@ WireConnection;92;0;91;0
 WireConnection;190;0;596;0
 WireConnection;192;0;248;0
 WireConnection;192;1;193;0
-WireConnection;247;0;165;0
 WireConnection;248;0;247;0
-WireConnection;336;0;600;0
 WireConnection;34;0;239;0
 WireConnection;34;1;586;0
 WireConnection;224;0;34;0
@@ -4398,21 +5562,12 @@ WireConnection;229;2;270;0
 WireConnection;229;9;245;0
 WireConnection;229;4;245;0
 WireConnection;229;5;245;0
-WireConnection;239;0;446;0
-WireConnection;53;0;600;0
-WireConnection;447;0;441;0
-WireConnection;447;1;129;0
-WireConnection;439;0;492;0
-WireConnection;439;1;446;0
-WireConnection;439;2;598;4
 WireConnection;317;0;34;0
 WireConnection;317;1;224;0
 WireConnection;270;0;317;0
 WireConnection;270;1;249;0
 WireConnection;492;3;248;0
 WireConnection;492;2;192;0
-WireConnection;497;3;492;0
-WireConnection;497;2;439;0
 WireConnection;522;0;521;0
 WireConnection;522;1;32;0
 WireConnection;95;1;130;0
@@ -4475,10 +5630,6 @@ WireConnection;552;0;607;119
 WireConnection;579;0;607;124
 WireConnection;117;0;607;36
 WireConnection;593;0;607;127
-WireConnection;441;0;443;0
-WireConnection;441;1;442;0
-WireConnection;441;2;57;0
-WireConnection;441;3;58;0
 WireConnection;596;30;337;0
 WireConnection;596;18;197;0
 WireConnection;104;0;607;24
@@ -4493,22 +5644,15 @@ WireConnection;603;15;517;0
 WireConnection;603;7;114;0
 WireConnection;603;8;115;0
 WireConnection;603;21;527;0
+WireConnection;336;0;600;0
+WireConnection;53;0;600;0
 WireConnection;582;10;253;0
 WireConnection;582;6;53;0
+WireConnection;239;0;492;0
 WireConnection;165;0;582;0
 WireConnection;165;1;169;0
-WireConnection;56;0;51;0
-WireConnection;56;1;53;0
-WireConnection;56;2;57;0
-WireConnection;56;3;58;0
-WireConnection;59;0;56;0
-WireConnection;59;1;129;0
-WireConnection;59;2;597;0
-WireConnection;583;10;584;0
-WireConnection;583;6;442;0
-WireConnection;445;0;583;0
-WireConnection;445;1;169;0
-WireConnection;446;0;445;0
-WireConnection;446;1;447;0
+WireConnection;165;2;597;0
+WireConnection;247;0;165;0
+WireConnection;608;0;597;0
 ASEEND*/
-//CHKSM=8C0A08D35B87A231354299D2B12B631B765BBDC2
+//CHKSM=2050DF8EFA3ADF64EF5AD1A678335099D125D68A

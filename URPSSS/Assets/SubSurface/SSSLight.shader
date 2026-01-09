@@ -15,6 +15,15 @@ Shader "Shenkong/SSSLighting"
         _BumpMap ("Normal Map", 2D) = "bump" {}
         _NormalIntensity("Normal Scale", Range(0, 10)) = 1
 
+        // OcclusionMap
+		[NoScaleOffset]_OcclusionMap("OcclusionMap", 2D) = "white" {}
+		_OcclusionColor("Occlusion Color", Color) = (0,0,0,0)
+		[Toggle]_Cavity("_Cavity", Range( 0 , 1)) = 1
+		_CavityStrength("Cavity", Range( 0 , 1)) = 0
+		_Occlusionfinalpass("Occlusion final pass", Range( 0 , 1)) = 0.5
+		_Occlusionlightpass("Occlusion light pass", Range( 0 , 1)) = 0.5
+		_SpecularOcclusion("Specular Occlusion", Range( 0 , 1)) = 1
+
         // Transmission
 		_Travel_Distance("Travel Distance", Range( 0 , 0.02)) = 0.01
 		_TravelDistancePointLights("Travel Distance PointLights", Range( 0 , 0.02)) = 0.01
@@ -78,7 +87,6 @@ Shader "Shenkong/SSSLighting"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareNormalsTexture.hlsl"        
             #include "./Common.hlsl"
 
-            // 定义 CBUFFER (常量缓冲区) 以支持 SRP Batcher 优化
             CBUFFER_START(UnityPerMaterial)
                 float4 _BaseMap_ST;
                 half4 _BaseColor;
@@ -90,6 +98,14 @@ Shader "Shenkong/SSSLighting"
                 half _Diffuseboost;
 
                 half _NormalIntensity;
+
+                // Occusion
+                half4 _OcclusionColor;
+                float _Cavity;
+                float _CavityStrength;
+                float _Occlusionlightpass;
+                float _Occlusionfinalpass;
+                float _SpecularOcclusion;
 
                 // Transmission
                 float _Travel_Distance;
@@ -107,10 +123,11 @@ Shader "Shenkong/SSSLighting"
                 half _MaskWithNormals;
             CBUFFER_END
 
-            // 纹理采样器声明
             TEXTURE2D(_BaseMap);            SAMPLER(sampler_BaseMap);
             TEXTURE2D(_SubsurfaceMap);      SAMPLER(sampler_SubsurfaceMap);
             TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);
+
+            TEXTURE2D(_OcclusionMap);            SAMPLER(sampler_OcclusionMap);
 
             TEXTURE2D(_TransmissionGradient);       SAMPLER(sampler_TransmissionGradient);
             TEXTURE2D(_TransmissionMap);            SAMPLER(sampler_TransmissionMap);
@@ -221,10 +238,20 @@ Shader "Shenkong/SSSLighting"
 
                 diffuseRes *= _Diffuseboost;
 
-                half4 subsurface = SAMPLE_TEXTURE2D(_SubsurfaceMap, sampler_SubsurfaceMap, input.uv);
-                subsurface = lerp(half4(1,1,1,1), subsurface, _Subsurface);
+                // subsurface map
+                // half4 subsurface = SAMPLE_TEXTURE2D(_SubsurfaceMap, sampler_SubsurfaceMap, input.uv);
+                // subsurface = lerp(half4(1,1,1,1), subsurface, _Subsurface);
 
-                diffuseRes *= subsurface.rgb;
+                // diffuseRes *= subsurface.rgb;
+
+                // Occlusion
+                half4 occlusionMap = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, input.uv);
+                half4 occlusionColor = lerp(_OcclusionColor, 1, occlusionMap.r);
+                half4 occlusionFinalPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionfinalpass);
+
+                half4 occlusionLightPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionlightpass); 
+
+                diffuseRes *= occlusionLightPass;
 
                 // Shadowmap
                 half3 experimental = 0.0;

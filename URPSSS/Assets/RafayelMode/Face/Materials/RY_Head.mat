@@ -14,8 +14,6 @@ Material:
   m_ValidKeywords:
   - _ENABLETRANSMISSIONGRADIENT_ON
   - _ENABLE_DETAIL_NORMAL
-  - _ENVIRONMENTREFLECTIONS_OFF
-  - _SPECULARHIGHLIGHTS_OFF
   m_InvalidKeywords:
   - _CAVITY_ON
   - _ENABLESUBSURFACE_ON
@@ -171,7 +169,7 @@ Material:
     - _EnableSubsurface: 1
     - _EnableTransmissionGradient: 1
     - _EnableUVScale: 0
-    - _EnvironmentReflections: 0
+    - _EnvironmentReflections: 1
     - _EnvironmentReflectionsIntensity: 1.08
     - _EyeDilation: 0
     - _FresnelIntensity: 0.606
@@ -210,7 +208,7 @@ Material:
     - _SmoothnessMult: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlightIntensity: 3.4
-    - _SpecularHighlights: 0
+    - _SpecularHighlights: 1
     - _SpecularOcclusion: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
