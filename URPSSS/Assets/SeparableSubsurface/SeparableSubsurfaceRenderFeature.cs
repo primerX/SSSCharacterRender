@@ -28,10 +28,7 @@ public class SeparableSubsurfaceRenderFeature : ScriptableRendererFeature
             return;
         }
 
-        if(pass.Setup(ref renderer))
-        {
-            renderer.EnqueuePass(pass);
-        }
+        renderer.EnqueuePass(pass);
     }
 
     protected override void Dispose(bool disposing)

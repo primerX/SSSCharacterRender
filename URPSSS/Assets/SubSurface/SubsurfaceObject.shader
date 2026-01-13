@@ -16,6 +16,10 @@ Shader "Shenkong/SSS MyOjbect"
         _BumpMap ("Normal Map", 2D) = "bump" {}
         _NormalIntensity("Normal Scale", Range(0, 3)) = 1
 
+        [Space]
+        [Head(MaskSetting)]
+        _MaskMap("Mask Map", 2D) = "white" {}
+
 
         [Header(Occlusion)]
 		[NoScaleOffset]_OcclusionMap("OcclusionMap", 2D) = "white" {}
@@ -166,6 +170,8 @@ Shader "Shenkong/SSS MyOjbect"
             TEXTURE2D(_SubsurfaceMap);     SAMPLER(sampler_SubsurfaceMap);
             TEXTURE2D(_BumpMap);      SAMPLER(sampler_BumpMap);
 
+            TEXTURE2D(_MaskMap);      SAMPLER(sampler_MaskMap);
+
             TEXTURE2D(_OcclusionMap);            SAMPLER(sampler_OcclusionMap);
             TEXTURE2D(_SpecGlossMap);            SAMPLER(sampler_SpecGlossMap);
 
@@ -253,17 +259,14 @@ Shader "Shenkong/SSS MyOjbect"
                 
                 half4 diffuseColor = baseMap * sssBlur;
                 
+                half4 maskMap = SAMPLE_TEXTURE2D(_MaskMap, sampler_MaskMap, input.uv);
+                // return half4(maskMap.a.xxx, 1);
+
                 // Occlusion
                 half4 occlusionMap = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, input.uv);
                 half4 occlusionColor = lerp(_OcclusionColor, 1, occlusionMap.r);
                 half4 occlusionFinalPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionfinalpass);
                 half4 occlusionLightPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionlightpass); 
-
-                half specularOcclusion = lerp(1, occlusionMap.g, _SpecularOcclusion);
-
-                half cavity = lerp(1, occlusionMap.b, _CavityStrength);
- 
-                cavity = lerp(1, cavity, _Cavity);
 
                 diffuseColor *= occlusionFinalPass;
 
@@ -292,17 +295,28 @@ Shader "Shenkong/SSS MyOjbect"
                 float3 GI = float3(1, 1, 1);
                 
                 // 高光
-                half4 specGlossMap = SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, input.uv);
-                half3 specColor = specGlossMap.rgb * _SpecColor * cavity * cavity;
+                // half specularOcclusion = lerp(1, occlusionMap.g, _SpecularOcclusion);
+                half specularOcclusion = lerp(1, maskMap.b, _SpecularOcclusion);
+                // half specularOcclusion = maskMap.b;
+                
+                // half cavity = lerp(1, occlusionMap.b, _CavityStrength);
+                half cavity = lerp(1, maskMap.b, _CavityStrength);
+                cavity = lerp(1, cavity, _Cavity);
 
-                half smoothness = specGlossMap.a * _SpecColor.a * _Smoothness;
+                half4 specGlossMap = SAMPLE_TEXTURE2D(_SpecGlossMap, sampler_SpecGlossMap, input.uv);
+                half3 specColor = specGlossMap.rgb * _SpecColor * cavity;
+
+                // half smoothness = specGlossMap.a * _SpecColor.a * _Smoothness;
+                half smoothness = maskMap.r;
 
                 half3 finalSpec = SpecularLightingFull(positionWS, normalWS, specColor,
                                     smoothness, viewWS, lightmapUV);
 
                 finalSpec *= _SpecularHighlightIntensity * specularOcclusion;
-                
+
                 half3 finalColor = diffuseColor.rgb + finalSpec;
+
+                // return half4(finalSpec.rgb, 1);
 
                 return half4(finalColor, 1);
 

@@ -6,7 +6,7 @@ using UnityEngine.Rendering.Universal;
 
 public class SeparableSSSVolume : VolumeComponent, IPostProcessComponent
 {
-    public FloatParameter SubsurfaceScaler = new ClampedFloatParameter(2, 0, 6);
+    public FloatParameter SubsurfaceScaler = new ClampedFloatParameter(2, 0, 20);
     public ColorParameter SubsurfaceColor = new ColorParameter(Color.white);
     public ColorParameter SubsurfaceFalloff = new ColorParameter(Color.white);
 

@@ -15,6 +15,10 @@ Shader "Shenkong/SSSLighting"
         _BumpMap ("Normal Map", 2D) = "bump" {}
         _NormalIntensity("Normal Scale", Range(0, 10)) = 1
 
+        [Space]
+        [Head(MaskSetting)]
+        _MaskMap("Mask Map", 2D) = "white" {}
+
         // OcclusionMap
 		[NoScaleOffset]_OcclusionMap("OcclusionMap", 2D) = "white" {}
 		_OcclusionColor("Occlusion Color", Color) = (0,0,0,0)
@@ -127,6 +131,8 @@ Shader "Shenkong/SSSLighting"
             TEXTURE2D(_SubsurfaceMap);      SAMPLER(sampler_SubsurfaceMap);
             TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);
 
+            TEXTURE2D(_MaskMap);      SAMPLER(sampler_MaskMap);
+
             TEXTURE2D(_OcclusionMap);            SAMPLER(sampler_OcclusionMap);
 
             TEXTURE2D(_TransmissionGradient);       SAMPLER(sampler_TransmissionGradient);
@@ -227,6 +233,10 @@ Shader "Shenkong/SSSLighting"
                 // normalWS = normalize(sceneNormals);
                 // return half4(sceneNormals, 1);
 
+                // Maskmap
+                half4 maskMap = SAMPLE_TEXTURE2D(_MaskMap, sampler_MaskMap, input.uv);
+                float diffuseRoughness = _DiffuseRoughness;
+                // float diffuseRoughness = 1- maskMap.r;
 
                 float3 positionWS = input.positionWS;
                 float3 viewWS = normalize(GetWorldSpaceViewDir(input.positionWS));
@@ -234,7 +244,7 @@ Shader "Shenkong/SSSLighting"
                 float3 GI = float3(1, 1, 1);
                 
                 half3 diffuseRes = DiffuseLightingFull(positionWS, normalWS, 
-                                    _DiffuseRoughness, viewWS, lightmapUV, GI, _LightClamp);
+                                        diffuseRoughness, viewWS, lightmapUV, GI, _LightClamp);
 
                 diffuseRes *= _Diffuseboost;
 
@@ -247,11 +257,14 @@ Shader "Shenkong/SSSLighting"
                 // Occlusion
                 half4 occlusionMap = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, input.uv);
                 half4 occlusionColor = lerp(_OcclusionColor, 1, occlusionMap.r);
-                half4 occlusionFinalPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionfinalpass);
+                // half4 occlusionColor = lerp(_OcclusionColor, 1, maskMap.r);
 
+                half4 occlusionFinalPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionfinalpass);
                 half4 occlusionLightPass = lerp(half4(1, 1, 1, 0), occlusionColor, _Occlusionlightpass); 
 
                 diffuseRes *= occlusionLightPass;
+
+                // return maskMap.r;
 
                 // Shadowmap
                 half3 experimental = 0.0;
@@ -259,7 +272,11 @@ Shader "Shenkong/SSSLighting"
                 float Travel_Distance_PointLights = _TravelDistancePointLights * _TravelDistanceMult;
                 float2 Cancel = float2(_CancelMin, _CancelMax);
                 half2 TSM_Grad = half2(_GradientMin, _GradientMax);
-                half thickness = SAMPLE_TEXTURE2D(_TransmissionMap, sampler_TransmissionMap, input.uv).r + _Transmission_Bias;
+                // half thickness = SAMPLE_TEXTURE2D(_TransmissionMap, sampler_TransmissionMap, input.uv).r + _Transmission_Bias;
+                
+                half thickness = maskMap.a + _Transmission_Bias;
+                // return thickness;
+
                 half intensity = _Transmission_intensity;
                 
                 float shadow = TranslucentShadowmap(_Travel_Distance, Travel_Distance_PointLights,

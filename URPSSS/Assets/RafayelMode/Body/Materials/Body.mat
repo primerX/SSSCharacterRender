@@ -14,6 +14,8 @@ Material:
   m_ValidKeywords:
   - _ENABLETRANSMISSIONGRADIENT_ON
   - _ENABLE_DETAIL_NORMAL
+  - _ENVIRONMENTREFLECTIONS_OFF
+  - _SPECULARHIGHLIGHTS_OFF
   m_InvalidKeywords:
   - _CAVITY_ON
   - _ENABLESUBSURFACE_ON
@@ -58,6 +60,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 1b1f46b956e5e7a4189488adeec50c95, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 2800000, guid: e3793b25a2ecb824fa95ae79d2542fed, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -169,7 +175,7 @@ Material:
     - _EnableSubsurface: 1
     - _EnableTransmissionGradient: 1
     - _EnableUVScale: 0
-    - _EnvironmentReflections: 1
+    - _EnvironmentReflections: 0
     - _EnvironmentReflectionsIntensity: 1.08
     - _EyeDilation: 0
     - _FresnelIntensity: 0.606
@@ -207,7 +213,7 @@ Material:
     - _SmoothnessMult: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlightIntensity: 3.4
-    - _SpecularHighlights: 1
+    - _SpecularHighlights: 0
     - _SpecularOcclusion: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1

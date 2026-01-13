@@ -105,7 +105,7 @@ Shader "ShenKong/KKHair"
         // =================================================================
         Pass
         {
-            Name "KajiyaKayBase 1"
+            Name "Hair Opaque"
             Tags 
             { 
                 "LightMode" = "SRPDefaultUnlit" 
@@ -118,12 +118,6 @@ Shader "ShenKong/KKHair"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            
-            // 修复关键字
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
-            #pragma multi_compile_fragment _ _SHADOWS_SOFT
 
             #include "Assets/TestFolder/HairShader/HairCommon.hlsl"
 
@@ -142,7 +136,7 @@ Shader "ShenKong/KKHair"
         // ------------------------------------------------------------------
         Pass
         {
-            Name "Hair Lit"
+            Name "Hair Transparent"
             Tags
             {
                 "LightMode" = "HairTransparent"
@@ -160,7 +154,7 @@ Shader "ShenKong/KKHair"
             ZWrite Off
             ZTest LEqual 
             Cull Off
-            AlphaToMask[_AlphaToMask]
+
 
             HLSLPROGRAM
             #pragma target 2.0

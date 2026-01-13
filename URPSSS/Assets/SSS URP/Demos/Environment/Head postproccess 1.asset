@@ -90,18 +90,6 @@ MonoBehaviour:
   FixPixelLeak:
     m_OverrideState: 1
     m_Value: 0.479
-  SubsurfaceScaler:
-    m_OverrideState: 1
-    m_Value: 6
-  SubsurfaceColor:
-    m_OverrideState: 1
-    m_Value: {r: 0.9490196, g: 0.6431373, b: 0.28235295, a: 1}
-  SubsurfaceFalloff:
-    m_OverrideState: 1
-    m_Value: {r: 1, g: 0.29803923, b: 0, a: 1}
-  SamplerSteps:
-    m_OverrideState: 1
-    m_Value: 25
   DepthTest:
     m_OverrideState: 1
     m_Value: 0.995
@@ -142,6 +130,7 @@ MonoBehaviour:
   - {fileID: -7117930014289229689}
   - {fileID: 6192688496339464172}
   - {fileID: 6789818462889391713}
+  - {fileID: 6318901039169560148}
 --- !u!114 &3227138651439810466
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -270,6 +259,28 @@ MonoBehaviour:
   texture:
     m_OverrideState: 0
     m_Value: {fileID: 0}
+--- !u!114 &6318901039169560148
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3454b72feba0f4a41950d1741a0232dc, type: 3}
+  m_Name: SeparableSSSVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  SubsurfaceScaler:
+    m_OverrideState: 1
+    m_Value: 3.36
+  SubsurfaceColor:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.30980393, b: 0, a: 1}
+  SubsurfaceFalloff:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.5058824, b: 0.1254902, a: 1}
 --- !u!114 &6689448967951557418
 MonoBehaviour:
   m_ObjectHideFlags: 3

@@ -167,18 +167,6 @@ void LitPassFragment(
     HairData hairData;
     InitializeSurfaceData(input.uv, surfaceData, hairData);
 
-    // #ifdef _DOUBLESIDED_ON
-    //     ApplyDoubleSidedFlipOrMirror(faceSign, _DoubleSidedConstants.xyz, surfaceData.normalTS);
-    // #endif
-
-    // #ifdef _ENABLE_GEOMETRIC_SPECULAR_AA
-    //     GeometricAAFiltering(input.normalWS.xyz, _SpecularAAScreenSpaceVariance, _SpecularAAThreshold, surfaceData.smoothness);
-    // #endif
-
-    // #ifdef LOD_FADE_CROSSFADE
-    //     LODFadeCrossFade(input.positionCS);
-    // #endif
-
     InputData inputData;
     VectorsData vData;
     InitializeInputData(input, surfaceData.normalTS, vData, inputData);
@@ -193,11 +181,7 @@ void LitPassFragment(
     // color.a = OutputAlpha(color.a, IsSurfaceTypeTransparent(_Surface));
 
     outColor = color;
-
-    // #ifdef _WRITE_RENDERING_LAYERS
-    //     uint renderingLayers = GetMeshRenderingLayer();
-    //     outRenderingLayers = float4(EncodeMeshRenderingLayer(renderingLayers), 0, 0, 0);
-    // #endif
+    // outColor = half4(surfaceData.albedo, surfaceData.alpha);
 }
 
 #endif

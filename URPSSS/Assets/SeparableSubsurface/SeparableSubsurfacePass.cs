@@ -27,28 +27,20 @@ public class SeparableSubsurfacePass : ScriptableRenderPass
     private RTHandle blurTexture1;
     private RTHandle blurTexture2;
 
-    protected ProfilingSampler executeSampler;
-    private ScriptableRenderer m_Renderer = null;
+    protected ProfilingSampler m_ProfilingSampler;
 
     public SeparableSubsurfacePass(Shader shader, Material mat)
     {
-		SubsurfaceMat = new Material(shader);
-        executeSampler = new ProfilingSampler("SeparableSubsurfacePass");
+		SubsurfaceMat = CoreUtils.CreateEngineMaterial(shader);
+        m_ProfilingSampler = new ProfilingSampler("SeparableSubsurfacePass");
 
         CopyLight = mat;
     }
 
-    internal bool Setup(ref ScriptableRenderer renderer)
-    {
-        m_Renderer = renderer;
 
-        return SubsurfaceMat != null;
-    }
-
-    public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
+    public override void Configure(CommandBuffer cmd,  RenderTextureDescriptor cameraTextureDescriptor)
     {
-        RenderTextureDescriptor cameraTargetDescriptor = renderingData.cameraData.cameraTargetDescriptor;
-        RenderTextureDescriptor descriptor = cameraTargetDescriptor;
+        RenderTextureDescriptor descriptor = cameraTextureDescriptor;
         descriptor.msaaSamples = 1;
         descriptor.depthBufferBits = 0;
         descriptor.colorFormat = RenderTextureFormat.DefaultHDR;
@@ -85,16 +77,10 @@ public class SeparableSubsurfacePass : ScriptableRenderPass
 		SubsurfaceMat.SetInt (Shader.PropertyToID("_SamplerSteps"), SamplerSteps);
     }
 
-    // 配置 RenderTarget (这里我们主要是在 Execute 里申请临时 RT，所以 Configure 可以留空或做简单配置)
-    public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
-    {
-        
-    }
-
     public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
     {
         var cmd = CommandBufferPool.Get();
-        using (new ProfilingScope(cmd, executeSampler))
+        using (new ProfilingScope(cmd, m_ProfilingSampler))
         {
             SetKernel();
 
