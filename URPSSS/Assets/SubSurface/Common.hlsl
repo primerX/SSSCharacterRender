@@ -212,10 +212,10 @@ half3 SpecularLightingFull(float3 WorldPos, half3 Normal, half3 SpecColor, half3
 
 }
 
-#if defined(__INTELLISENSE__)
-#define ADDITIONAL_LIGHT_CALCULATE_SHADOWS
-#define _ENABLETRANSMISSIONGRADIENT_ON
-#endif
+// #if defined(__INTELLISENSE__)
+// #define ADDITIONAL_LIGHT_CALCULATE_SHADOWS
+// #define _ENABLETRANSMISSIONGRADIENT_ON
+// #endif
 //Translucency shadowmap
 
 //taken from AdditionalLightRealtimeShadow in Shadows.hlsl
@@ -228,6 +228,7 @@ half ComputeAdditionalTSM(int lightIndex, float3 positionWS, half3 lightDirectio
         lightIndex = GetPerObjectLightIndex(lightIndex);
     #endif
     
+
     #if defined(ADDITIONAL_LIGHT_CALCULATE_SHADOWS)
         ShadowSamplingData shadowSamplingData = GetAdditionalLightShadowSamplingData(lightIndex);
   
@@ -248,26 +249,25 @@ half ComputeAdditionalTSM(int lightIndex, float3 positionWS, half3 lightDirectio
         }
 
         #if USE_STRUCTURED_BUFFER_FOR_LIGHT_DATA
-                    float4 shadowCoord = mul(_AdditionalLightsWorldToShadow_SSBO[shadowSliceIndex], float4(positionWS, 1.0));
+            float4 shadowCoord = mul(_AdditionalLightsWorldToShadow_SSBO[shadowSliceIndex], float4(positionWS, 1.0));
         #else
-                    float4 shadowCoord = mul(_AdditionalLightsWorldToShadow[shadowSliceIndex], float4(positionWS, 1.0));
+            float4 shadowCoord = mul(_AdditionalLightsWorldToShadow[shadowSliceIndex], float4(positionWS, 1.0));
         #endif
-        //return SampleShadowmap(TEXTURE2D_ARGS(_AdditionalLightsShadowmapTexture, sampler_LinearClampCompare), shadowCoord, shadowSamplingData, shadowParams, true);
-        //
+        
         //isPerspectiveProjection
         shadowCoord.xyz /= shadowCoord.w;
         half depth = SAMPLE_TEXTURE2D_LOD(_AdditionalLightsShadowmapTexture, sampler_LinearClamp, shadowCoord.xy, 0).r;
     
         half ShadowMap = depth - shadowCoord.z;
-        TravelDistance = TravelDistance * shadowCoord.z;//correct the distance
-        TravelDistance *= 50;//compensate to look similar to the directional
+        TravelDistance = TravelDistance * shadowCoord.z; //correct the distance
+        TravelDistance *= 50; //compensate to look similar to the directional
         ShadowMap = ShadowMap / TravelDistance;
         ShadowMap = saturate(ShadowMap);
+
         return (1.0 - ShadowMap);
-        //return 1-shadowCoord.z;
-        //return depth;
+
     #else
-        return half(1.0);//el deferred salta aquí
+        return half(1.0);
     #endif
 }
 
@@ -427,6 +427,90 @@ float TranslucentShadowmap(float TravelDistance, float TravelDistancePointLights
     experimental = AdditionalLight + MainLight * (1.0 - GetMainLightShadowFade(WorldPos));
    
     return DirectionalTSM;
+ 
+}
+
+half3 TranslucentShadowmap_My(float TravelDistance, float TravelDistancePointLights,
+                            float3 WorldPos, float3 ViewPos,
+                            float3 WorldNormal, float2 Cancel, float MaskWithNormals,
+                            out float3 experimental, TSMRamp, 
+                            SamplerState ssClamp, half2 TSM_Grad, half thicknessMap,
+                            half Intensity, half LightClamp)
+{
+    experimental = .5;
+	
+	float4 shadowCoord = TransformWorldToShadowCoord(WorldPos);
+    float shadowmapDepth = SAMPLE_TEXTURE2D(_MainLightShadowmapTexture, sampler_LinearClamp, shadowCoord.xy).r;
+
+    float thicknessArea = shadowmapDepth - shadowCoord.z;
+
+    thicknessArea = saturate(thicknessArea / TravelDistance);
+    float DirectionalTSM = 1.0 - thicknessArea;
+
+    Light DirectionalLight = GetMainLight();
+
+    float TransmissionAtten = thicknessMap;
+    float TransmissionAttenAvg = TransmissionAtten;
+    TransmissionAttenAvg *= (DirectionalLight.color.r + DirectionalLight.color.g + DirectionalLight.color.b) / 3;
+    TransmissionAttenAvg *= Intensity;
+    
+    //Cancel    
+    if (MaskWithNormals == 1)
+        TransmissionAtten *= TransmissionMasking(WorldNormal, DirectionalLight.direction, Cancel);
+
+    half3 MainLightRes = DirectionalTSM * TransmissionAtten * DirectionalLight.color * Intensity;
+
+    #ifdef _ENABLETRANSMISSIONGRADIENT_ON
+        MainLightRes *= SAMPLE_TEXTURE2D_LOD(_TransmissionGradient, ssClamp, TSM_Remap(DirectionalTSM * TransmissionAttenAvg, TSM_Grad.x, TSM_Grad.y), 0).rgb;
+    #endif
+    
+    #if defined(_LIGHT_COOKIES)
+        MainLightRes *= SampleMainLightCookie(WorldPos);
+    #endif
+       
+    //Other lights
+    half3 AdditionalLight = 0;
+    uint pixelLightCount = GetAdditionalLightsCount();
+    uint meshRenderingLayers = GetMeshRenderingLayer();
+    float4 Shadowmask = 1;
+
+    LIGHT_LOOP_BEGIN(pixelLightCount)
+
+    Light light = GetAdditionalLight(lightIndex, WorldPos, Shadowmask);
+	#ifdef _LIGHT_LAYERS
+		if (IsMatchingLightLayer(light.layerMask, meshRenderingLayers))
+	#endif
+		{
+            half3 LightColor = light.color;  
+
+            half3 attenuatedLightColor = LightColor * light.distanceAttenuation;
+            //  点光源在范围内会非常亮, 需要进行限制
+            attenuatedLightColor = LightIntensityClamp(attenuatedLightColor, LightClamp);
+
+            float AdditionalTSM = ComputeAdditionalTSM(lightIndex, WorldPos, light.direction, TravelDistancePointLights);
+
+            float TransmissionAttenAvg = thicknessMap;
+            TransmissionAttenAvg *= (attenuatedLightColor.r + attenuatedLightColor.g + attenuatedLightColor.b) / 3;
+            TransmissionAttenAvg *= Intensity;
+
+            //Cancel    
+            if (MaskWithNormals == 1)    
+                TransmissionAtten *= TransmissionMasking(WorldNormal, light.direction, Cancel);
+            
+            #ifdef _ENABLETRANSMISSIONGRADIENT_ON
+                AdditionalLight += attenuatedLightColor * AdditionalTSM * TransmissionAtten * Intensity * SAMPLE_TEXTURE2D_LOD(_TransmissionGradient, ssClamp, TSM_Remap(AdditionalTSM * TransmissionAttenAvg, TSM_Grad.x, TSM_Grad.y), 0).rgb;
+            #else
+                AdditionalLight += attenuatedLightColor * AdditionalTSM * TransmissionAtten * Intensity;
+            #endif
+        }
+        
+    // AdditionalLight *= 1.0 - GetAdditionalLightShadowFade(WorldPos);
+    
+    LIGHT_LOOP_END
+
+    experimental = AdditionalLight + MainLightRes * (1.0 - GetMainLightShadowFade(WorldPos));
+   
+    return experimental;
  
 }
 

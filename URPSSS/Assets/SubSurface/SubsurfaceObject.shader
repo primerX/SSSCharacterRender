@@ -45,11 +45,12 @@ Shader "Shenkong/SSS MyOjbect"
 
 		[Enum(x1,1,x2,2,x4,4,x8,8,x16,16)] _TravelDistanceMult("TravelDistance Multiplier", Range( 1 , 6)) = 1
 		_Transmission_Bias("Transmission Bias", Range( 0 , 0.5)) = 0
-		_CancelMin("CancelMin", Range( -1 , 0)) = -0.5
-		_CancelMax("CancelMax", Range( 0 , 1)) = 0
+
 
 		[Toggle]_MaskWithNormals("Mask with normals", Range( 0 , 1)) = 0
-
+		_CancelMin("CancelMin", Range( -1 , 0)) = -0.5
+		_CancelMax("CancelMax", Range( 0 , 1)) = 0
+        
         [Space]
         [Header(SpecSetting)]
         [NoScaleOffset]_SpecGlossMap("Specular Map", 2D) = "white" {}

@@ -6,8 +6,8 @@
 
 #define DistanceToProjectionWindow 5.671281819617709             //1.0 / tan(0.5 * radians(20));
 #define DPTimes300 1701.384545885313                             //DistanceToProjectionWindow * 300
-// #define SamplerSteps 25
 #define SamplerSteps 25
+// #define SamplerSteps 9
 
 TEXTURE2D(_MainTex);
 SAMPLER(sampler_MainTex);
@@ -23,8 +23,35 @@ float4 _CameraDepthTexture_TexelSize;
 float _SSSScale;
 // int _SamplerSteps;
 
-
 uniform float4 _Kernel[SamplerSteps];
+
+#define CustomKernelSize 9
+static float4 customKernel[9] = 
+{
+    float4( 0.1804, 0.3333, 0.4986 ,  0.0 ),
+    float4( 0.1666, 0.2356, 0.2283 , -1.0 ),
+    float4( 0.1666, 0.2356, 0.2283 ,  1.0 ),
+    float4( 0.1310, 0.0830, 0.0219 , -2.0 ),
+    float4( 0.1310, 0.0830, 0.0219 ,  2.0 ),
+    float4( 0.0878, 0.0147, 0.00044, -3.0 ),
+    float4( 0.0878, 0.0147, 0.00044,  3.0 ),
+    float4( 0.0244, 0.000056, 0.0  , -5.0 ),
+    float4( 0.0244, 0.000056, 0.0  ,  5.0 ),
+};
+
+// static float4 customKernel[CustomKernelSize] = 
+// {
+//     float4( 0.1611, 0.3333, 0.4986 ,  0.0 ),
+//     float4( 0.1524, 0.2356, 0.2283 , -1.0 ),
+//     float4( 0.1524, 0.2356, 0.2283 ,  1.0 ),
+//     float4( 0.1290, 0.0830, 0.0219 , -2.0 ),
+//     float4( 0.1290, 0.0830, 0.0219 ,  2.0 ),
+//     float4( 0.0977, 0.0147, 0.00044, -3.0 ),
+//     float4( 0.0977, 0.0147, 0.00044,  3.0 ),
+//     float4( 0.0402, 0.000056, 0.0  , -5.0 ),
+//     float4( 0.0977, 0.000056, 0.0  ,  5.0 ),
+// };
+
 
 struct Attributes
 {
@@ -92,5 +119,6 @@ half4 SSS(half4 SceneColor, float2 UV, float2 SSSIntencity)
 
     return BlurSceneColor;
 }
+
 
 #endif

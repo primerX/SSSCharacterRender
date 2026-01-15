@@ -41,10 +41,11 @@ Shader "Shenkong/SSSLighting"
 
 		[Enum(x1,1,x2,2,x4,4,x8,8,x16,16)] _TravelDistanceMult("Multiplier", Range( 1 , 6)) = 1
 		_Transmission_Bias("Transmission Bias", Range( 0 , 0.5)) = 0
-		_CancelMin("CancelMin", Range( -1 , 0)) = -0.5
-		_CancelMax("CancelMax", Range( 0 , 1)) = 0
+
 
 		[Toggle]_MaskWithNormals("Mask with normals", Range( 0 , 1)) = 0
+        _CancelMin("CancelMin", Range( -1 , 0)) = -0.5
+		_CancelMax("CancelMax", Range( 0 , 1)) = 0
     }
 
     SubShader
@@ -279,13 +280,13 @@ Shader "Shenkong/SSSLighting"
 
                 half intensity = _Transmission_intensity;
                 
-                float shadow = TranslucentShadowmap(_Travel_Distance, Travel_Distance_PointLights,
+                half3 transmissionArea = TranslucentShadowmap_My(_Travel_Distance, Travel_Distance_PointLights,
                     positionWS, viewWS, normalWS, Cancel, _MaskWithNormals,
                     experimental, _TransmissionGradient, sampler_TransmissionGradient, TSM_Grad,
                     thickness, intensity, _LightClamp
                 );
 
-                // return half4(experimental, 1);
+                // return half4(transmissionArea, 1);
 
                 // --- 最终合成 ---
                 half3 finalColor = diffuseRes + experimental;
