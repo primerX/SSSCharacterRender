@@ -116,10 +116,11 @@ Shader "ShenKong/KKHair"
             Cull Off
 
             HLSLPROGRAM
-            #pragma vertex vert
+            #pragma vertex LitPassVertex
             #pragma fragment frag
 
-            #include "Assets/TestFolder/HairShader/HairCommon.hlsl"
+            #include "ShaderLibrary/Hair/KKHairInput.hlsl"
+            #include "ShaderLibrary/Hair/KKHairForwardPass.hlsl"
 
             half4 frag(Varyings input) : SV_Target
             {

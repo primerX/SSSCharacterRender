@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: RY_Eye_L
-  m_Shader: {fileID: 4800000, guid: 2cb34386d43460b438b6e6ae662a48d1, type: 3}
+  m_Shader: {fileID: 4800000, guid: 206af98ce1ca9f840b1c6836f3af6f7e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:

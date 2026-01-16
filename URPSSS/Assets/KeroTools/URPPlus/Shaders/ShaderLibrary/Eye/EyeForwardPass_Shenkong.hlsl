@@ -193,8 +193,10 @@ half4 LitPassFragment(
     TransformEyeVectorsToOS(input, positionOS, viewDirOS, normalOS);
     
     float3 refractedPosOS = CorneaRefraction(positionOS + float3(0.0, 0.0, _PositionOffset.z), viewDirOS, normalOS, 1.333h, 0.02h) + _PositionOffset.xyz;
-    float2 irisUV = IrisUVLocation(refractedPosOS, 0.225h);
-    float2 scleraUV = ScleraUVLocation(positionOS);
+    // float2 irisUV = IrisUVLocation(refractedPosOS, 0.225h);
+    // float2 scleraUV = ScleraUVLocation(positionOS);
+    float2 irisUV = input.uv;
+    float2 scleraUV = input.uv;
     
     half scleraLimbalRing = ScleraLimbalRing(positionOS, viewDirOS, 0.225h, _LimbalRingSizeSclera, _LimbalRingFade, _LimbalRingIntensity);
 
@@ -204,6 +206,7 @@ half4 LitPassFragment(
     float2 circlePupilAnim = CirclePupilAnimation(irisUV, _PupilRadius, saturate(mydriasisK * _PupilAperture), _MinimalPupilAperture, _MaximalPupilAperture);
     float2 irisOffset = circlePupilAnim;
 
+    // half4 irisMap = SAMPLE_TEXTURE2D(_IrisMap, sampler_IrisMap, irisOffset);
     half4 irisMap = SAMPLE_TEXTURE2D(_IrisMap, sampler_IrisMap, irisOffset);
     half3 irisAlbedo = irisMap.rgb;
     half irisArea = SAMPLE_TEXTURE2D(_IrisMaskMap, sampler_IrisMaskMap, irisOffset).r;
@@ -213,6 +216,9 @@ half4 LitPassFragment(
 
     half irisLimbalRing = IrisLimbalRing(irisUV, viewDirOS, _LimbalRingSizeIris, _LimbalRingFade, _LimbalRingIntensity);
     half3 irisColor = IrisOutOfBoundColorClamp(irisOffset, irisAlbedo, _IrisClampColor.rgb) * irisLimbalRing;
+
+    // half3 testColor = lerp(scleraAlbedo, irisColor, irisArea);
+    // return half4(testColor, 1);
 
     half3 irisNormal = SampleEyeNormal(irisOffset, TEXTURE2D_ARGS(_IrisNormalMap, SAMPLER_NORMALMAP_IDX), _IrisNormalScale);
     half3 scleraNormal = SampleEyeNormal(scleraUV, TEXTURE2D_ARGS(_ScleraNormalMap, SAMPLER_NORMALMAP_IDX), _ScleraNormalScale);
@@ -224,22 +230,23 @@ half4 LitPassFragment(
     half3 diffuseNormalWS = surfaceNormal;
     half3 specularNormalWS = surfaceNormal;
 
-    #if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
-        float sgn = input.tangentWS.w; // should be either +1 or -1
-        float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
-        half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
+    // #if defined(REQUIRES_WORLD_SPACE_TANGENT_INTERPOLATOR)
+    //     float sgn = input.tangentWS.w; // should be either +1 or -1
+    //     float3 bitangent = sgn * cross(input.normalWS.xyz, input.tangentWS.xyz);
+    //     half3x3 tangentToWorld = half3x3(input.tangentWS.xyz, bitangent.xyz, input.normalWS.xyz);
 
-        #if defined(_IRIS_NORMALMAP) || (_DOUBLESIDED_ON)
-            diffuseNormalWS = NormalizeNormalPerPixel(TransformTangentToWorld(diffuseNormalTS, tangentToWorld));
-        #endif
+    //     #if defined(_IRIS_NORMALMAP) || (_DOUBLESIDED_ON)
+    //         diffuseNormalWS = NormalizeNormalPerPixel(TransformTangentToWorld(diffuseNormalTS, tangentToWorld));
+    //     #endif
 
-        #if defined(_SCLERA_NORMALMAP) || (_DOUBLESIDED_ON)
-            specularNormalWS = NormalizeNormalPerPixel(TransformTangentToWorld(specularNormalTS, tangentToWorld));
-        #endif
-    #endif
+    //     #if defined(_SCLERA_NORMALMAP) || (_DOUBLESIDED_ON)
+    //         specularNormalWS = NormalizeNormalPerPixel(TransformTangentToWorld(specularNormalTS, tangentToWorld));
+    //     #endif
+    // #endif
 
     SurfaceData surfaceData = EmptyFill();
-    surfaceData.albedo = lerp(scleraAlbedo, irisColor, surfaceMask);
+    // surfaceData.albedo = lerp(scleraAlbedo, irisColor, surfaceMask);
+    surfaceData.albedo = lerp(scleraAlbedo, irisColor, irisArea);
     surfaceData.smoothness = lerp(_ScleraSmoothness, _CorneaSmoothness, surfaceMask);
     surfaceData.emission = SampleEmission(irisOffset, TEXTURE2D_ARGS(_EmissionMap, sampler_EmissionMap), 
                                             surfaceData.albedo, _EmissionColor.rgb, _EmissionScale * surfaceMask);

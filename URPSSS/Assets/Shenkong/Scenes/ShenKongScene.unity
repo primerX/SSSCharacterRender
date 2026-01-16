@@ -11734,7 +11734,7 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 0.6754716, g: 0.6665503, b: 0.6665503, a: 1}
-  m_Intensity: 8
+  m_Intensity: 7
   m_Range: 3.7612255
   m_SpotAngle: 75.60721
   m_InnerSpotAngle: 53.60368
@@ -26778,8 +26778,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1747220178}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0002576859, y: -0.99956954, z: -0.027840266, w: -0.009251884}
-  m_LocalPosition: {x: 0.006577434, y: 0.29879066, z: 0.51438844}
+  m_LocalRotation: {x: -0.00008906077, y: 0.99979895, z: -0.019527512, w: -0.0045598675}
+  m_LocalPosition: {x: 0.009114423, y: 0.312748, z: 1.0363959}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -26881,8 +26881,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Frequency: 50
-  position: {x: 0.006577434, y: 0.29879066, z: 0.51438844}
-  rotation: {x: 356.8092, y: 178.93939, z: -0.0000000066804633}
+  position: {x: 0.009114423, y: 0.312748, z: 1.0363959}
+  rotation: {x: 2.2378538, y: 180.52263, z: 0}
 --- !u!1 &1752742972
 GameObject:
   m_ObjectHideFlags: 0
@@ -63843,7 +63843,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &919132148474435490
 GameObject:
   m_ObjectHideFlags: 0
@@ -96634,7 +96634,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1857677325904908251
 Transform:
   m_ObjectHideFlags: 0
