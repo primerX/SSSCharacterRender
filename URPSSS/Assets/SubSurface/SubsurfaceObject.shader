@@ -5,8 +5,8 @@ Shader "Shenkong/SSS MyOjbect"
         [NoScaleOffset]_BaseMap("BaseMap", 2D) = "white" {}
         _Color ("Base Color", Color) = (1, 1, 1, 1)
 
-        [NoScaleOffset]_SubsurfaceMap("Surface Map", 2D) = "white" {}
-        _Subsurface("SurfaceMap Visibility", Range(0, 1)) = 1
+        [HideInInspector] [NoScaleOffset]_SubsurfaceMap("Surface Map", 2D) = "white" {}
+        [HideInInspector] _Subsurface("SurfaceMap Visibility", Range(0, 1)) = 1
 
         _DiffuseRoughness("Diffuse Roughness", Range(0, 1)) = 1
         _LightClamp("Light Clamp", Float) = 10
@@ -19,6 +19,32 @@ Shader "Shenkong/SSS MyOjbect"
         [Space]
         [Head(MaskSetting)]
         _MaskMap("Mask Map", 2D) = "white" {}
+        _RedCheekMap("Red Cheek", 2D) = "white" {}
+        _RedCheekIntensity("Red Cheek Intensity", Vector) = (0, 0, 0, 0)
+
+        // [Space]
+        // [Header(WeatherSetting)]
+        [Toggle] _RainDrop_Normal("RainDrop Normal", Float) = 0
+        _Wetness("Weatness", Range(0, 10)) = 1
+        _RainMaskMap("Rain MaskMap", 2D) = "white" {}
+        _RainTiling("Rain Tiling", Vector) = (1, 1, 1, 1)
+
+        _RainNormalMap ("_Rain NormalMap", 2D) = "bump" {}
+        _RainNormalScale("_RainNormalScale", Range(0, 10)) = 1
+
+        _RainDropSize("_RainDrop Size", Range(0, 10)) = 1
+        _RainAnimationSpeed("_RainAnimationSpeed", Range(0, 0.2)) = 0.1
+
+        _RainDistortionMap("_Rain DistortionMap", 2D) = "white" {}
+        _RainDistortionScale("_RainDistortionScale", Range(0, 2)) = 1
+        _RainDistortionSize("_RainDistortionSize", Range(0, 2)) = 1
+
+        [Toggle] _RainDrop_Procedure("RainDrop Procedure", Float) = 0
+        _UVGridSize("UV Grid Size", Vector) = (6, 6, 0, 0)
+		_RainAmount("_RainAmount", Range(0, 1)) = 1
+		_DynamicRainDropSpeed("_DynamicRainDropSpeed", Range(0, 2)) = 0.1
+		_DynamiceLayer1Tiling("_DynamiceLayer1Tiling", Range(0, 2)) = 0.1
+		_DynamiceLayer2Tiling("_DynamiceLayer2Tiling", Range(0, 2)) = 0.1
 
 
         [Header(Occlusion)]
@@ -54,16 +80,15 @@ Shader "Shenkong/SSS MyOjbect"
         [Space]
         [Header(SpecSetting)]
         [NoScaleOffset]_SpecGlossMap("Specular Map", 2D) = "white" {}
-        _SpecColor("Specular Color", Color) = (0.08490568,0.08490568,0.08490568,1)
+        _SpecColor("Specular Color", Color) = (0.08490568, 0.08490568, 0.08490568, 1)
 		_Smoothness("Smoothness", Range( 0 , 1)) = 0.65
-		[Enum(x1,1,x2,2,x4,4,x8,8,x16,16)]_SmoothnessMult("Multiplier", Range( 1 , 6)) = 1
+		// [Enum(x1,1,x2,2,x4,4,x8,8,x16,16)]_SmoothnessMult("Multiplier", Range( 1 , 6)) = 1
 
 		// _FresnelIntensity("FresnelIntensity", Range( 0 , 1)) = 0.55
         // _EnvironmentReflectionsIntensity("EnvironmentReflectionsIntensity", Range( 0 , 3)) = 1
 		_SpecularHighlightIntensity("SpecularHighlightIntensity", Range( 0 , 20)) = 1
 
 		[HideInInspector][ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
-
         [HideInInspector] _ProfileMap("Profiler Map", 2D) = "white" {}
         [HideInInspector] _ProfileColor ("Profiler Color", Color) = (1, 1, 1, 1)
         [HideInInspector] _Blur("Blur", Range(0, 1)) = 0.5
@@ -79,10 +104,11 @@ Shader "Shenkong/SSS MyOjbect"
 
         Pass
         {
-			Name "SSSObjct Forward"
-            // Tags { "LightMode" = "UniversalForward" }
+			Name "SSSObject Forward"
+            Tags { "LightMode" = "UniversalForward" }
 
-            Stencil{
+            Stencil
+            {
                 Ref 1
                 comp Always
                 pass Replace
@@ -95,155 +121,29 @@ Shader "Shenkong/SSS MyOjbect"
 
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-            // #pragma multi_compile _ EVALUATE_SH_MIXED EVALUATE_SH_VERTEX
+  
             #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
             // #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
             // #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
-            // #pragma multi_compile_fragment _ _DBUFFER_MRT1 _DBUFFER_MRT2 _DBUFFER_MRT3
-            // #pragma multi_compile_fragment _ _LIGHT_COOKIES
-            // #pragma multi_compile _ _LIGHT_LAYERS
-            // #pragma multi_compile _ _FORWARD_PLUS
+
 
             // -------------------------------------
 			#pragma multi_compile_local_fragment __ _ENABLETRANSMISSIONGRADIENT_ON
-			#pragma shader_feature_local _ENABLE_DETAIL_NORMAL
-			#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
-			#pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+			// #pragma shader_feature_local _ENABLE_DETAIL_NORMAL
+			// #pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
+			// #pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
 
-            // 引入 URP 核心库和光照库
+			#pragma shader_feature_local_fragment _RAINDROP_NROMAL_ON
+			#pragma shader_feature_local_fragment _RAINDROP_PROCEDURE_ON
+
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "./Common.hlsl"
-
-            // 定义 CBUFFER (常量缓冲区) 以支持 SRP Batcher 优化
-            CBUFFER_START(UnityPerMaterial)
-                float4 _BaseMap_ST;
-                half4 _Color;
-
-                half _Subsurface;
-
-                half _LightClamp;
-                half _DiffuseRoughness;
-                half _Diffuseboost;
-
-                half _NormalIntensity;
-
-                float _SmoothnessMult;
-
-                // Occusion
-                half4 _OcclusionColor;
-                float _Cavity;
-                float _Occlusionlightpass;
-                float _Occlusionfinalpass;
-                float _SpecularOcclusion;
-
-                // Transmission
-                half _TransmissionColor;
-                float _Travel_Distance;
-                float _TravelDistancePointLights;
-
-                half _GradientMin;
-                half _GradientMax;
-
-                half _Transmission_intensity;
-                half _TravelDistanceMult;
-                half _Transmission_Bias;
-                half _CancelMin;
-                half _CancelMax;
-
-                half _MaskWithNormals;
-
-                half4 _ProfileColor;
-                half _Blur;
-
-                half4 _SpecColor;
-                half _Smoothness;
-                half _CavityStrength;
-                half _FresnelIntensity;
-                half _EnvironmentReflectionsIntensity;
-                half _SpecularHighlightIntensity;
-            CBUFFER_END
-
-            // 纹理采样器声明
-            TEXTURE2D(_BaseMap);        SAMPLER(sampler_BaseMap);
-            TEXTURE2D(_SubsurfaceMap);     SAMPLER(sampler_SubsurfaceMap);
-            TEXTURE2D(_BumpMap);      SAMPLER(sampler_BumpMap);
-
-            TEXTURE2D(_MaskMap);      SAMPLER(sampler_MaskMap);
-
-            TEXTURE2D(_OcclusionMap);            SAMPLER(sampler_OcclusionMap);
-            TEXTURE2D(_SpecGlossMap);            SAMPLER(sampler_SpecGlossMap);
-
-            TEXTURE2D(_TransmissionGradient);      SAMPLER(sampler_TransmissionGradient);
-            TEXTURE2D(_TransmissionMap);      SAMPLER(sampler_TransmissionMap);
-
-			TEXTURE2D(_SSS_Blur);   SAMPLER(sampler_SSS_Blur);
-
-            // 顶点着色器输入结构体
-            struct Attributes
-            {
-                float4 positionOS : POSITION; // 物体空间坐标
-                float3 normalOS   : NORMAL;   // 物体空间法线
-                float4 tangentOS : TANGENT;
-                float2 uv         : TEXCOORD0;// UV坐标
-            };
-
-            // 顶点 -> 片元 传递结构体
-            struct Varyings
-            {
-                float4 positionCS : SV_POSITION; // 裁剪空间坐标
-                float3 positionWS : TEXCOORD0;   // 世界空间坐标
-                float2 uv         : TEXCOORD1;
-
-                float3 normalWS   : TEXCOORD2;   // 世界空间法线
-                float4 tangentWS : TEXCOORD3;
-                float3 bitangentWS : TEXCOORD4;
-
-                float4 screenPos  : TEXCOORD5; // 传递屏幕坐标
-
-                float4 ase_texcoord4 : TEXCOORD6;
-				float4 ase_texcoord5 : TEXCOORD7;
-				float4 ase_texcoord6 : TEXCOORD8;
-
-            };
-
-            // 顶点着色器
-            Varyings vert(Attributes input)
-            {
-                Varyings output;
-                
-                // 1. 空间变换：物体空间 -> 世界空间 -> 裁剪空间
-                VertexPositionInputs vertexInput = GetVertexPositionInputs(input.positionOS.xyz);
-                output.positionCS = vertexInput.positionCS;
-                output.positionWS = vertexInput.positionWS;
-
-                // 2. 法线变换：物体空间 -> 世界空间
-                VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS);
-                output.normalWS = normalInput.normalWS;
-                float sign = input.tangentOS.w * GetOddNegativeScale();
-                half4 tangentWS = half4(normalInput.tangentWS.xyz, sign);
-                output.tangentWS = tangentWS;
-                output.bitangentWS = normalInput.bitangentWS;
-
-                // ASE normalWS
-				float3 ase_worldTangent = TransformObjectToWorldDir(input.tangentOS.xyz);
-				output.ase_texcoord4.xyz = ase_worldTangent;
-				float3 ase_worldNormal = TransformObjectToWorldNormal(input.normalOS);
-				output.ase_texcoord5.xyz = ase_worldNormal;
-				float ase_vertexTangentSign = input.tangentOS.w * ( unity_WorldTransformParams.w >= 0.0 ? 1.0 : -1.0 );
-				float3 ase_worldBitangent = cross( ase_worldNormal, ase_worldTangent ) * ase_vertexTangentSign;
-				output.ase_texcoord6.xyz = ase_worldBitangent;
-
-                // 3. UV 变换
-                output.uv = TRANSFORM_TEX(input.uv, _BaseMap);
-                
-                // ComputeScreenPos 是 URP 提供的核心函数，处理了平台差异（DirectX/OpenGL）
-                output.screenPos = ComputeScreenPos(output.positionCS);
-
-                return output;
-            }
+            #include "./SSSObjectInput.hlsl"
+            #include "./RainDropNormal.hlsl"
+            #include "./RainDropProcedure.hlsl"
 
             // 片元着色器
             half4 frag(Varyings input, bool isFacing : SV_IsFrontFace) : SV_Target
@@ -260,8 +160,14 @@ Shader "Shenkong/SSS MyOjbect"
                 
                 half4 diffuseColor = baseMap * sssBlur;
                 
+                half wetness = 1.0f;
+                #if _RAINDROP_PROCEDURE_ON
+                half4 rainDropColor = RainDropFunction(input);
+                diffuseColor = rainDropColor * sssBlur;
+                wetness = _Wetness;
+                #endif
+
                 half4 maskMap = SAMPLE_TEXTURE2D(_MaskMap, sampler_MaskMap, input.uv);
-                // return half4(maskMap.a.xxx, 1);
 
                 // Occlusion
                 half4 occlusionMap = SAMPLE_TEXTURE2D(_OcclusionMap, sampler_OcclusionMap, input.uv);
@@ -274,21 +180,27 @@ Shader "Shenkong/SSS MyOjbect"
                 // 采样法线贴图并解包 (UnpackNormalScale 处理了纹理压缩和强度缩放)
                 float4 normal = SAMPLE_TEXTURE2D(_BumpMap, sampler_BumpMap, input.uv);
                 half3 normalTS = UnpackNormalScale(normal, _NormalIntensity);
+
+                #if _RAINDROP_NROMAL_ON
+                normalTS = ApplyWeather(input.positionWS.xyz, input.normalWS.xyz, input.uv, normalTS);
+                wetness = _Wetness;
+                #endif
+
 				half3 normalWS = TransformTangentToWorld(normalTS, half3x3(input.tangentWS.xyz, input.bitangentWS.xyz, input.normalWS.xyz));
 
 				normalWS = normalize(normalWS);
 
-                // ASE 计算 NormalWS 方法
-				float3 ase_worldTangent = input.ase_texcoord4.xyz;
-				float3 ase_worldNormal = input.ase_texcoord5.xyz;
-				float3 ase_worldBitangent = input.ase_texcoord6.xyz;
+                // // ASE 计算 NormalWS 方法
+				// float3 ase_worldTangent = input.ase_texcoord4.xyz;
+				// float3 ase_worldNormal = input.ase_texcoord5.xyz;
+				// float3 ase_worldBitangent = input.ase_texcoord6.xyz;
 
-				float3 tanToWorld0 = float3( ase_worldTangent.x, ase_worldBitangent.x, ase_worldNormal.x );
-				float3 tanToWorld1 = float3( ase_worldTangent.y, ase_worldBitangent.y, ase_worldNormal.y );
-				float3 tanToWorld2 = float3( ase_worldTangent.z, ase_worldBitangent.z, ase_worldNormal.z );
-				float3 tanNormal610 = normalTS;
-				float3 worldNormal610 = normalize( float3(dot(tanToWorld0,tanNormal610), dot(tanToWorld1,tanNormal610), dot(tanToWorld2,tanNormal610)) );
-                normalWS = worldNormal610;
+				// float3 tanToWorld0 = float3( ase_worldTangent.x, ase_worldBitangent.x, ase_worldNormal.x );
+				// float3 tanToWorld1 = float3( ase_worldTangent.y, ase_worldBitangent.y, ase_worldNormal.y );
+				// float3 tanToWorld2 = float3( ase_worldTangent.z, ase_worldBitangent.z, ase_worldNormal.z );
+				// float3 tanNormal610 = normalTS;
+				// float3 worldNormal610 = normalize( float3(dot(tanToWorld0,tanNormal610), dot(tanToWorld1,tanNormal610), dot(tanToWorld2,tanNormal610)) );
+                // normalWS = worldNormal610;
 
 
                 half3 viewWS = normalize(GetWorldSpaceViewDir(input.positionWS));
@@ -313,14 +225,11 @@ Shader "Shenkong/SSS MyOjbect"
                 half3 finalSpec = SpecularLightingFull(positionWS, normalWS, specColor,
                                     smoothness, viewWS, lightmapUV);
 
-                finalSpec *= _SpecularHighlightIntensity * specularOcclusion;
+                finalSpec *= _SpecularHighlightIntensity * wetness * specularOcclusion;
 
                 half3 finalColor = diffuseColor.rgb + finalSpec;
 
-                // return half4(finalSpec.rgb, 1);
-
                 return half4(finalColor, 1);
-
             }
 
             ENDHLSL
@@ -471,5 +380,5 @@ Shader "Shenkong/SSS MyOjbect"
 
     }
 
-    // CustomEditor "SubsurfaceShaderGUI"
+    CustomEditor "SubsurfaceShaderGUI"
 }

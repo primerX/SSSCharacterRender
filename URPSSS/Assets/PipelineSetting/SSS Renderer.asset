@@ -203,7 +203,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    passTag: RenderObjects
+    passTag: HairTransparent
     Event: 500
     filterSettings:
       RenderQueueType: 0

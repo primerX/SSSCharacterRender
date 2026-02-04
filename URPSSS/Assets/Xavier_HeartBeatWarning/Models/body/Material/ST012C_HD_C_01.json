@@ -1,0 +1,217 @@
+{
+  "m_Shader": {
+    "m_FileID": 7,
+    "m_PathID": -5393817380575811604,
+    "Name": "Papegame/Cloth/ClothStandard",
+    "IsNull": false
+  },
+  "m_SavedProperties": {
+    "m_TexEnvs": {
+      "_MainTex": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": 7024124233021793021,
+          "Name": "ST012C_HD_C_01_D1024",
+          "IsNull": false
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_NormalMap": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": 3570830088779278225,
+          "Name": "ST012C_HD_C_01_N",
+          "IsNull": false
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_PatAlbedoMap": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": 3646350320162357482,
+          "Name": "ST012C_HD_C_01_3U_D",
+          "IsNull": false
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_PatNormalMap": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": -8199030142334888894,
+          "Name": "ST012C_HD_C_01_3U_N",
+          "IsNull": false
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_StiAlbedoMap": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": 0,
+          "Name": "",
+          "IsNull": true
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_StiNormalMap": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": 0,
+          "Name": "",
+          "IsNull": true
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_TexAlbedoMap": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": 0,
+          "Name": "",
+          "IsNull": true
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_TexMaterialMap": {
+        "m_Texture": {
+          "m_FileID": 0,
+          "m_PathID": 0,
+          "Name": "",
+          "IsNull": true
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      },
+      "_TexNormalMap": {
+        "m_Texture": {
+          "m_FileID": 8,
+          "m_PathID": -1180750853560341755,
+          "Name": "tile_0037_N",
+          "IsNull": false
+        },
+        "m_Scale": {
+          "X": 1.0,
+          "Y": 1.0
+        },
+        "m_Offset": {
+          "X": 0.0,
+          "Y": 0.0
+        }
+      }
+    },
+    "m_Ints": null,
+    "m_Floats": {
+      "_AlphaBlendShadow": 0.0,
+      "_AlphaClip": 0.0,
+      "_Blend": 0.0,
+      "_Cull": 2.0,
+      "_Cutoff": 0.0,
+      "_DOFBlurFlag": 1.0,
+      "_DstAlphaBlend": 0.0,
+      "_DstColorBlend": 0.0,
+      "_GI": 1.0,
+      "_InstructionNum": 0.0,
+      "_IsOpaque": 1.0,
+      "_Metallic": 1.0,
+      "_PatNormalMode": 1.0,
+      "_Smoothness": 1.0,
+      "_SrcAlphaBlend": 1.0,
+      "_SrcColorBlend": 1.0,
+      "_StencilRef": 0.0,
+      "_StiNormalMode": 0.0,
+      "_Surface": 0.0,
+      "_TexAlbedoBlendMode": 0.0,
+      "_TexMaterialBlendMode": 0.0,
+      "_TexNormalScale": 1.0,
+      "_TexNormalUV": 1.0,
+      "_ZWrite": 1.0
+    },
+    "m_Colors": {
+      "_Color": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "_SpecularColor": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0,
+        "a": 1.0
+      },
+      "_TexNmlFade": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 15.0,
+        "a": -0.071428575
+      },
+      "_TexNmlTileOffset": {
+        "r": 30.0,
+        "g": 30.0,
+        "b": 0.0,
+        "a": 0.0
+      },
+      "_TexTileOffset": {
+        "r": 15.0,
+        "g": 15.0,
+        "b": 0.0,
+        "a": 0.0
+      }
+    }
+  },
+  "m_Name": "ST012C_HD_C_01",
+  "Name": "ST012C_HD_C_01"
+}

@@ -1,13 +1,7 @@
 #ifndef _BLUR_HLSL_
 #define _BLUR_HLSL_
 
-// Includes
-// #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-// #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-// #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
-
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
-// #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/ShaderVariablesFunctions.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareNormalsTexture.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/FoveatedRendering.hlsl"

@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ST_Head_Sweat
+  m_Shader: {fileID: 4800000, guid: 4fcb885697b16b1489bdbed4dc63745e, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ENABLETRANSMISSIONGRADIENT_ON
+  - _ENABLE_DETAIL_NORMAL
+  - _ENVIRONMENTREFLECTIONS_OFF
+  - _SPECULARHIGHLIGHTS_OFF
+  m_InvalidKeywords:
+  - _CAVITY_ON
+  - _ENABLESUBSURFACE_ON
+  - _TRANSMISSION_ON
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 1a76330d5f803054a93fbafa59d62b2f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 483156c3eb610ce499ec04605221b993, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskMap:
+        m_Texture: {fileID: 2800000, guid: f78ef446ab4503a4499e116d62fbd560, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ProfileMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubsurfaceMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionGradient:
+        m_Texture: {fileID: 2800000, guid: 60bab8eb753ec814d9e79736e527853b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TransmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _WaterMask:
+        m_Texture: {fileID: 2800000, guid: 61ecfe4daffc8cc4a9ec9212401eb18b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _ArmWaterDrop: 0
+    - _Blur: 0.061
+    - _CancelMax: 1
+    - _CancelMin: -1
+    - _Cavity: 1
+    - _CavityStrength: 0.624
+    - _DiffuseRoughness: 1
+    - _Diffuseboost: 1
+    - _DynamicRainDropSpeed: 1
+    - _DynamiceLayer1RainAmount: 0.75
+    - _DynamiceLayer1Tiling: 1
+    - _DynamiceLayer2RainAmount: 0.75
+    - _DynamiceLayer2Tiling: 1
+    - _FlowMapStrength: 1
+    - _GradientMax: 4
+    - _GradientMin: -1
+    - _LightClamp: 10
+    - _MaskWithNormals: 0
+    - _MaxBlur: 1
+    - _MinBlur: 0
+    - _NormalIntensity: 1
+    - _Occlusionfinalpass: 0
+    - _Occlusionlightpass: 0.167
+    - _RainAmount: 0.3
+    - _Smoothness: 0.349
+    - _SmoothnessMult: 1
+    - _SpecularHighlightIntensity: 0.2
+    - _SpecularHighlights: 0
+    - _SpecularOcclusion: 1
+    - _StaticRainAmount: 1
+    - _StaticRainDropSpeed: 1
+    - _Subsurface: 1
+    - _TimeScale: 0.1
+    - _Transmission_Bias: 0.016
+    - _Transmission_intensity: 0.48
+    - _TravelDistanceMult: 1
+    - _TravelDistancePointLights: 0.02
+    - _Travel_Distance: 0.0173
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _FlowDirection: {r: 1, g: 1, b: 0, a: 0}
+    - _OcclusionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ProfileColor: {r: 0.9433962, g: 0.6235298, b: 0.493058, a: 1}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SweatSize: {r: 1, g: 1, b: 1, a: 1}
+    - _TransmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _UVGridSize: {r: 6, g: 6, b: 0, a: 0}
+  m_BuildTextureStacks: []
+--- !u!114 &5031180573482368738
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 7

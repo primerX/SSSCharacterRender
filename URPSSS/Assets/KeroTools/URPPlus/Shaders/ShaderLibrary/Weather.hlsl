@@ -4,7 +4,7 @@
 #include "ShaderLibrary/TriplanarMapping.hlsl"
 
 TEXTURE2D(_PuddlesNormal);
-TEXTURE2D(_RainNormal);
+TEXTURE2D(_RainNormal); SAMPLER(sampler_RainNormal);
 TEXTURE2D(_RainDistortionMap);
 TEXTURE2D(_RainMaskMap);
 
@@ -42,13 +42,19 @@ half3 ApplyTriplanarRain(UVMapping uvMapping, real2 rainDistortion, half3 puddle
     real2 rainNormalUV_B = (uvMapping.uvZY + rainDistortion + rainSpeed) * _RainSize;
 
     half rainIntensity_A  = _RainNormalScale * uvMapping.triplanarWeights.z;
+    // half rainIntensity_A  = _RainNormalScale * uvMapping.triplanarWeights.y;
     half rainIntensity_B = _RainNormalScale * uvMapping.triplanarWeights.x;
 
     half3 rainNormal_A = SampleRainNormal(rainNormalUV_A, TEXTURE2D_ARGS(_RainNormal, sampler_LinearRepeat), rainIntensity_A);
     half3 rainNormal_B = SampleRainNormal(rainNormalUV_B, TEXTURE2D_ARGS(_RainNormal, sampler_LinearRepeat), rainIntensity_B);
 
+    //反向
+    rainNormal_A.xy *= -1;
+    rainNormal_B.xy *= -1;
+    // return rainNormal_B;
     // Final result
     return BlendNormal(puddlesNormal, BlendNormal(rainNormal_A, rainNormal_B));
+    return BlendNormal(rainNormal_A, rainNormal_B);
 }
 
 void ApplyWeather(float3 positionWS, float3 normalWS, float2 uv, inout half3 albedo, inout half3 normalTS, inout half smoothness)
@@ -70,6 +76,7 @@ void ApplyWeather(float3 positionWS, float3 normalWS, float2 uv, inout half3 alb
         half3 rainNormalTS = puddlesNormalTS;
         #ifdef _RAIN_TRIPLANAR
         rainNormalTS = ApplyTriplanarRain(uvMapping, rainDistortion, puddlesNormalTS);
+        // rainNormalTS = SampleRainNormal(uv, TEXTURE2D_ARGS(_RainNormal, sampler_RainNormal), _RainNormalScale);
         #endif
 
         albedo = lerp(albedo, _WetnessColor.rgb, wetnessFactor * _WetnessColor.a);

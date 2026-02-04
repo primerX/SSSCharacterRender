@@ -18,7 +18,7 @@ Shader "Shenkong/SSSLighting"
         [Space]
         [Head(MaskSetting)]
         _MaskMap("Mask Map", 2D) = "white" {}
-
+        
         // OcclusionMap
 		[NoScaleOffset]_OcclusionMap("OcclusionMap", 2D) = "white" {}
 		_OcclusionColor("Occlusion Color", Color) = (0,0,0,0)
@@ -102,6 +102,8 @@ Shader "Shenkong/SSSLighting"
                 half _DiffuseRoughness;
                 half _Diffuseboost;
 
+                half4 _RedCheekIntensity;
+
                 half _NormalIntensity;
 
                 // Occusion
@@ -133,6 +135,7 @@ Shader "Shenkong/SSSLighting"
             TEXTURE2D(_BumpMap);            SAMPLER(sampler_BumpMap);
 
             TEXTURE2D(_MaskMap);      SAMPLER(sampler_MaskMap);
+            TEXTURE2D(_RedCheekMap);      SAMPLER(sampler_RedCheekMap);
 
             TEXTURE2D(_OcclusionMap);            SAMPLER(sampler_OcclusionMap);
 
@@ -252,7 +255,6 @@ Shader "Shenkong/SSSLighting"
                 // subsurface map
                 // half4 subsurface = SAMPLE_TEXTURE2D(_SubsurfaceMap, sampler_SubsurfaceMap, input.uv);
                 // subsurface = lerp(half4(1,1,1,1), subsurface, _Subsurface);
-
                 // diffuseRes *= subsurface.rgb;
 
                 // Occlusion
@@ -276,7 +278,11 @@ Shader "Shenkong/SSSLighting"
                 // half thickness = SAMPLE_TEXTURE2D(_TransmissionMap, sampler_TransmissionMap, input.uv).r + _Transmission_Bias;
                 
                 half thickness = maskMap.a + _Transmission_Bias;
-                // return thickness;
+                half4 redCheekInfo = SAMPLE_TEXTURE2D(_RedCheekMap, sampler_RedCheekMap, input.uv);
+                thickness += redCheekInfo.r * _RedCheekIntensity.x;     //
+                thickness += redCheekInfo.g * _RedCheekIntensity.y;     // 脸颊部分
+                thickness += redCheekInfo.b * _RedCheekIntensity.z;     // 眼下部分
+                thickness += redCheekInfo.a * _RedCheekIntensity.w;     // 耳朵部分
 
                 half intensity = _Transmission_intensity;
                 
